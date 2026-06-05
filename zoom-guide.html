@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zoom かんたんガイド — やさしいピアノカフェ</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --main: #B5896A;
+    --main-dk: #9B7355;
+    --bg: #F5F1ED;
+    --bg2: #EDE6DE;
+    --text: #4A3F35;
+    --sub: #8B7B6E;
+    --border: #DCC8B3;
+    --card: #FFFFFF;
+    --green: #4CAF50;
+    --blue: #2196F3;
+    --orange: #FF9800;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 18px; }
+  body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); line-height: 1.9; }
+
+  /* ヘッダー */
+  .header {
+    background: linear-gradient(rgba(181,137,106,0.88),rgba(155,115,85,0.92)), url('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1200&q=80') center/cover no-repeat;
+    color: #fff;
+    padding: 2rem 1.5rem;
+    text-align: center;
+  }
+  .header-brand { font-size: 0.9rem; opacity: 0.85; margin-bottom: 0.5rem; }
+  .header-title { font-family: 'Noto Serif JP', serif; font-size: clamp(1.5rem, 5vw, 2.2rem); font-weight: 700; margin-bottom: 0.5rem; }
+  .header-sub { font-size: 0.95rem; opacity: 0.9; }
+
+  /* メイン */
+  .container { max-width: 700px; margin: 0 auto; padding: 0 1.25rem; }
+  section { padding: 2.5rem 0; }
+
+  /* 注意書き */
+  .notice {
+    background: #FFF9E6;
+    border: 2px solid #FFD54F;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+    font-size: 1rem;
+  }
+  .notice-title { font-weight: 700; color: #E65100; margin-bottom: 0.4rem; font-size: 1.05rem; }
+
+  /* ステップ */
+  .step-block {
+    background: var(--card);
+    border-radius: 16px;
+    border: 2px solid var(--border);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+  }
+  .step-header {
+    background: var(--main);
+    color: #fff;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .step-num {
+    background: rgba(255,255,255,0.25);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+  .step-title { font-weight: 700; font-size: 1.1rem; }
+  .step-body { padding: 1.5rem; }
+
+  /* 図解ボックス */
+  .phone-mock {
+    background: #1a1a1a;
+    border-radius: 28px;
+    padding: 12px;
+    margin: 1.25rem auto;
+    max-width: 280px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+  }
+  .phone-screen {
+    background: #fff;
+    border-radius: 18px;
+    overflow: hidden;
+    min-height: 200px;
+  }
+  .phone-topbar {
+    background: #f0f0f0;
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+    color: #666;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+  }
+  .phone-content { padding: 1rem; }
+
+  /* アプリボタン風 */
+  .app-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    font-size: 2rem;
+    margin: 0.5rem;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  }
+  .app-zoom { background: #2D8CFF; }
+  .app-label { font-size: 0.75rem; color: #333; text-align: center; display: block; margin-top: 4px; }
+
+  /* ボタン図解 */
+  .btn-demo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin: 0.3rem;
+  }
+  .btn-green { background: #4CAF50; color: #fff; }
+  .btn-blue { background: #2196F3; color: #fff; }
+  .btn-orange { background: #FF9800; color: #fff; }
+  .btn-gray { background: #9E9E9E; color: #fff; }
+  .btn-red { background: #F44336; color: #fff; }
+
+  /* 矢印 */
+  .arrow {
+    text-align: center;
+    font-size: 2rem;
+    color: var(--main);
+    margin: 0.5rem 0;
+    display: block;
+  }
+
+  /* チェックリスト */
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 1rem;
+  }
+  .check-item:last-child { border-bottom: none; }
+  .check-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 2px; }
+
+  /* 図解画面 */
+  .screen-demo {
+    background: #f8f8f8;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+  }
+  .screen-title {
+    font-size: 0.8rem;
+    color: #888;
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+  .zoom-home {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1rem;
+  }
+  .zoom-logo {
+    color: #2D8CFF;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  .zoom-btn-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .zoom-btn {
+    background: var(--b, #2D8CFF);
+    color: #fff;
+    border-radius: 8px;
+    padding: 0.7rem 0.5rem;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+
+  /* 重要ポイント */
+  .point-box {
+    background: #FFF3E0;
+    border-left: 5px solid var(--main);
+    border-radius: 0 12px 12px 0;
+    padding: 1rem 1.25rem;
+    margin: 1rem 0;
+  }
+  .point-label { font-weight: 700; color: var(--main); font-size: 0.9rem; margin-bottom: 0.3rem; }
+
+  /* カメラ図解 */
+  .camera-demo {
+    background: #263238;
+    border-radius: 16px;
+    padding: 1rem;
+    margin: 1rem 0;
+    color: #fff;
+    text-align: center;
+  }
+  .camera-view {
+    background: #37474F;
+    border-radius: 12px;
+    padding: 1.5rem 1rem;
+    margin: 0.5rem 0;
+    font-size: 0.85rem;
+    position: relative;
+  }
+  .camera-label {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.7rem;
+  }
+
+  /* よくある質問 */
+  .faq-item {
+    background: var(--card);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .faq-q { font-weight: 700; color: var(--main); margin-bottom: 0.5rem; font-size: 1rem; }
+  .faq-a { font-size: 0.95rem; color: var(--sub); line-height: 1.8; }
+
+  /* フッター */
+  footer {
+    background: var(--text);
+    color: rgba(255,255,255,0.8);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+  footer a { color: #DCC8B3; }
+
+  /* セクションタイトル */
+  .sec-label { font-size: 0.75rem; letter-spacing: 0.15em; color: var(--main); font-weight: 700; margin-bottom: 0.4rem; }
+  .sec-title { font-family: 'Noto Serif JP', serif; font-size: clamp(1.3rem, 4vw, 1.8rem); font-weight: 700; margin-bottom: 1rem; }
+
+  .tip { background: #E8F5E9; border-radius: 10px; padding: 0.8rem 1.1rem; margin: 0.75rem 0; font-size: 0.95rem; }
+  .tip::before { content: "💡 "; }
+</style>
+</head>
+<body>
+
+<!-- ヘッダー -->
+<div class="header">
+  <div class="header-brand">🎹 やさしいピアノカフェ</div>
+  <h1 class="header-title">Zoom かんたんガイド</h1>
+  <div class="header-sub">はじめての方でも安心！<br>画像つきでやさしく説明します</div>
+</div>
+
+<!-- 本文 -->
+<div class="container">
+
+  <!-- 注意書き -->
+  <section>
+    <div class="notice">
+      <div class="notice-title">📌 はじめにお読みください</div>
+      このページでは、スマートフォン・タブレットでZoomを使う方法を説明しています。<br>
+      わからないことがあれば、いつでもLINEでまみにご連絡ください😊
+    </div>
+  </section>
+
+  <!-- STEP 1: アプリのインストール -->
+  <section>
+    <div class="sec-label">STEP 1</div>
+    <h2 class="sec-title">Zoomアプリを入れる</h2>
+
+    <div class="step-block">
+      <div class="step-header">
+        <div class="step-num">1</div>
+        <div class="step-title">App Store（iPhone・iPad）を開く</div>
+      </div>
+      <div class="step-body">
+        <p>ホーム画面にある青い「App Store」アイコンをタップします。</p>
+
+        <div class="phone-mock">
+          <div class="phone-screen">
+            <div class="phone-topbar">ホーム画面</div>
+            <div class="phone-content" style="text-align:center; padding: 1.5rem 1rem;">
+              <div style="display:inline-block; text-align:center; margin:0.5rem;">
+                <div class="app-icon" style="background: linear-gradient(135deg,#00C7FC,#0077FF);">🔍</div>
+                <span class="app-label">App Store</span>
+              </div>
+              <p style="font-size:0.8rem; color:#666; margin-top:1rem;">👆 これをタップ！</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tip">Androidの方は「Google Play ストア」を開いてください</div>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-header">
+        <div class="step-num">2</div>
+        <div class="step-title">「Zoom」を検索する</div>
+      </div>
+      <div class="step-body">
+        <p>画面下の🔍マークをタップして「zoom」と入力します。</p>
+
+        <div class="screen-demo">
+          <div class="screen-title">App Store の検索画面</div>
+          <div style="background:#fff; border-radius:8px; padding:0.5rem 0.75rem; border:1px solid #ddd; display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem;">
+            <span>🔍</span>
+            <span style="color:#2D8CFF; font-weight:700;">zoom</span>
+          </div>
+          <div style="background:#fff; border-radius:8px; padding:0.75rem; border:1px solid #ddd; display:flex; align-items:center; gap:0.75rem;">
+            <div style="background:#2D8CFF; border-radius:12px; width:48px; height:48px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:1.3rem; flex-shrink:0;">📹</div>
+            <div style="flex:1;">
+              <div style="font-weight:700; font-size:0.9rem;">Zoom - One Platform to Connect</div>
+              <div style="font-size:0.75rem; color:#888;">Zoom Video Communications</div>
+            </div>
+            <div style="background:#2D8CFF; color:#fff; border-radius:6px; padding:0.3rem 0.6rem; font-size:0.8rem; font-weight:700;">入手</div>
+          </div>
+        </div>
+
+        <p>「<strong>Zoom - One Platform to Connect</strong>」が出てきたら<br>「<strong>入手</strong>」をタップします。</p>
+        <div class="tip">インストールは完全無料です</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 2: アカウント作成 -->
+  <section>
+    <div class="sec-label">STEP 2</div>
+    <h2 class="sec-title">Zoomに登録する（初回のみ）</h2>
+
+    <div class="step-block">
+      <div class="step-header">
+        <div class="step-num">1</div>
+        <div class="step-title">アプリを開いてサインアップ</div>
+      </div>
+      <div class="step-body">
+        <div class="screen-demo">
+          <div class="screen-title">Zoom アプリの最初の画面</div>
+          <div class="zoom-home">
+            <div class="zoom-logo">zoom</div>
+            <div style="margin-bottom:0.5rem;">
+              <div class="zoom-btn" style="--b:#2D8CFF; margin-bottom:0.5rem;">サインイン</div>
+            </div>
+            <div class="zoom-btn" style="--b:#fff; color:#2D8CFF; border:2px solid #2D8CFF; font-weight:700; text-align:center; border-radius:8px; padding:0.7rem; font-size:0.85rem;">
+              ➡️ サインアップ（新規登録）← タップ
+            </div>
+          </div>
+        </div>
+
+        <p>初めての方は「<strong>サインアップ</strong>」をタップしてください。</p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-header">
+        <div class="step-num">2</div>
+        <div class="step-title">メールアドレスで登録する</div>
+      </div>
+      <div class="step-body">
+        <div class="check-item"><div class="check-icon">①</div><div>生年月日を入力する</div></div>
+        <div class="check-item"><div class="check-icon">②</div><div>メールアドレスを入力する</div></div>
+        <div class="check-item"><div class="check-icon">③</div><div>「続行」をタップ</div></div>
+        <div class="check-item"><div class="check-icon">④</div><div>入力したメールに確認メールが届く</div></div>
+        <div class="check-item"><div class="check-icon">⑤</div><div>メールの「アクティベート」ボタンをタップ</div></div>
+        <div class="check-item"><div class="check-icon">⑥</div><div>パスワードを決めて登録完了！</div></div>
+
+        <div class="point-box">
+          <div class="point-label">📌 大切なポイント</div>
+          メールアドレスとパスワードはメモしておいてください。次回のログインに使います。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 3: レッスンに参加する -->
+  <section>
+    <div class="sec-label">STEP 3</div>
+    <h2 class="sec-title">レッスンに参加する方法</h2>
+
+    <div class="step-block">
+      <div class="step-header">
+        <div class="step-num">1</div>
+        <div class="step-title">LINEでリンクを受け取る</div>
+      </div>
+      <div class="step-body">
+        <p>レッスンの前日か当日に、まみからLINEでリンクが届きます。</p>
+
+        <div class="screen-demo">
+          <div class="screen-title">LINEに届くメッセージのイメージ</div>
+          <div style="background:#fff; border-radius:12px; padding:1rem;">
+            <div style="background:#E8F5E9; border-radius:12px 12px 12px 4px; padding:0.75rem 1rem; max-width:80%; font-size:0.9rem; line-height:1.7;">
+              🎹 今日のレッスンのZoomリンクです！<br>
+              <span style="color:#2D8CFF; text-decoration:underline;">https://zoom.us/j/123456789</span><br>
+              ↑このリンクをタップしてください😊
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-header">
+        <div class="step-num">2</div>
+        <div class="step-title">リンクをタップして入室する</div>
+      </div>
+      <div class="step-body">
+        <span class="arrow">↓</span>
+        <div class="screen-demo">
+          <div class="screen-title">ミーティングへの参加画面</div>
+          <div style="background:#fff; border-radius:8px; padding:1rem; text-align:center;">
+            <p style="font-size:0.9rem; margin-bottom:1rem;">「ビデオをオンにして参加」<br>をタップしてください</p>
+            <div style="background:#2D8CFF; color:#fff; border-radius:8px; padding:0.75rem; font-weight:700; margin-bottom:0.5rem;">📹 ビデオをオンにして参加</div>
+            <div style="background:#f0f0f0; color:#333; border-radius:8px; padding:0.75rem; font-size:0.85rem;">ビデオなしで参加</div>
+          </div>
+        </div>
+
+        <div class="tip">「ビデオをオンにして参加」を選ぶと、まみに手元が見えます</div>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-header">
+        <div class="step-num">3</div>
+        <div class="step-title">マイクとビデオを確認する</div>
+      </div>
+      <div class="step-body">
+        <p>画面の下にボタンが並んでいます。</p>
+
+        <div class="screen-demo">
+          <div class="screen-title">Zoom 操作ボタン（画面下部）</div>
+          <div style="background:#1a1a1a; border-radius:8px; padding:0.75rem; display:flex; justify-content:space-around; align-items:center;">
+            <div style="text-align:center; color:#fff;">
+              <div style="font-size:1.5rem;">🎤</div>
+              <div style="font-size:0.7rem; margin-top:4px;">ミュート解除<br><span style="color:#4CAF50;">✅ オン</span></div>
+            </div>
+            <div style="text-align:center; color:#fff;">
+              <div style="font-size:1.5rem;">📹</div>
+              <div style="font-size:0.7rem; margin-top:4px;">ビデオ停止<br><span style="color:#4CAF50;">✅ オン</span></div>
+            </div>
+            <div style="text-align:center; color:#fff;">
+              <div style="font-size:1.5rem;">👥</div>
+              <div style="font-size:0.7rem; margin-top:4px;">参加者</div>
+            </div>
+            <div style="text-align:center; color:#fff;">
+              <div style="font-size:1.5rem; color:#F44336;">✕</div>
+              <div style="font-size:0.7rem; margin-top:4px; color:#F44336;">退出</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="check-item"><div class="check-icon">🎤</div><div>マイクが「ミュート解除」になっていること（声が聞こえる状態）</div></div>
+        <div class="check-item"><div class="check-icon">📹</div><div>ビデオが「オン」になっていること（映像が映っている状態）</div></div>
+
+        <div class="point-box">
+          <div class="point-label">⚠️ 赤い斜め線が入っている場合</div>
+          マイクやビデオがオフになっています。タップしてオンにしてください。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 4: カメラの置き方 -->
+  <section>
+    <div class="sec-label">STEP 4</div>
+    <h2 class="sec-title">カメラの置き方（大切！）</h2>
+
+    <p style="margin-bottom:1rem;">レッスンでは<strong>鍵盤が映るように</strong>カメラを置いてください。まみが手元を見て指導できます。</p>
+
+    <div class="step-block">
+      <div class="step-header">
+        <div class="step-num">✅</div>
+        <div class="step-title">おすすめの置き方</div>
+      </div>
+      <div class="step-body">
+        <div class="camera-demo">
+          <div style="font-size:0.85rem; margin-bottom:0.5rem; opacity:0.7;">Zoomの画面イメージ</div>
+          <div class="camera-view">
+            <span class="camera-label">あなたの画面</span>
+            <div style="font-size:3rem; margin-bottom:0.5rem;">🎹</div>
+            <div style="font-size:0.85rem; opacity:0.7;">鍵盤と手元が映っている</div>
+          </div>
+          <div style="font-size:0.8rem; opacity:0.7; margin-top:0.5rem;">← まみにはこう見えます</div>
+        </div>
+
+        <div class="check-item"><div class="check-icon">📱</div><div>スマホを<strong>横向き</strong>にする</div></div>
+        <div class="check-item"><div class="check-icon">🎹</div><div>ピアノの<strong>右横か左横</strong>に立てる</div></div>
+        <div class="check-item"><div class="check-icon">📐</div><div>鍵盤と手元が<strong>斜め上から</strong>映る角度に調整</div></div>
+
+        <div class="tip">スマホスタンドや本に立てかけると安定します。100円ショップで売っています！</div>
+
+        <div class="point-box">
+          <div class="point-label">💡 顔は映らなくても大丈夫！</div>
+          鍵盤と手元が見えれば、指使いや手の形まで確認できます。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- よくある質問 -->
+  <section>
+    <div class="sec-label">FAQ</div>
+    <h2 class="sec-title">よくある質問</h2>
+
+    <div class="faq-item">
+      <div class="faq-q">Q. 声が聞こえないと言われたら？</div>
+      <div class="faq-a">画面下の🎤マークをタップしてください。赤い斜め線が消えればマイクがオンになります。それでも聞こえない場合は、スマホの音量を上げてみてください。</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Q. 画面が真っ暗（映像が映らない）場合は？</div>
+      <div class="faq-a">画面下の📹マークをタップしてください。カメラがオンになります。それでも映らない場合は、一度Zoomを閉じて開き直してください。</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Q. リンクをタップしたら「Zoomを開きますか？」と聞かれた</div>
+      <div class="faq-a">「開く」または「Zoomで開く」をタップしてください。自動的にZoomアプリが起動してレッスンに参加できます。</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Q. 途中で音や映像が途切れた場合は？</div>
+      <div class="faq-a">Wi-Fiの近くに移動してみてください。それでも改善しない場合は、一度退出してリンクをタップしてもう一度入り直してください。LINEでまみに「一度切れました」と送っていただければ待っています。</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Q. Zoomを終わらせるには？</div>
+      <div class="faq-a">画面下の赤い「退出」ボタンをタップしてください。「ミーティングを退出」を選べばレッスンが終了します。</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Q. うまくできるか不安です</div>
+      <div class="faq-a">大丈夫です！無料相談の時間にZoomの練習もできます。一緒に確認しますので、安心してご参加ください😊 わからないことはLINEでいつでも聞いてください。</div>
+    </div>
+  </section>
+
+  <!-- 困ったときは -->
+  <section>
+    <div style="background: var(--main); color:#fff; border-radius:20px; padding:2rem; text-align:center;">
+      <div style="font-size:1.5rem; margin-bottom:0.5rem;">😊</div>
+      <div style="font-family:'Noto Serif JP',serif; font-size:1.3rem; font-weight:700; margin-bottom:0.75rem;">困ったときはLINEへ！</div>
+      <p style="opacity:0.9; margin-bottom:1.25rem; font-size:0.95rem;">どんな小さなことでも、まみが直接お答えします。<br>「Zoomが開けない」「音が出ない」など何でもどうぞ。</p>
+      <a href="https://lin.ee/YNL3n7c" style="background:#fff; color:var(--main); font-weight:700; padding:0.9rem 2rem; border-radius:50px; display:inline-block; text-decoration:none; font-size:1rem;">
+        💬 LINEで相談する
+      </a>
+    </div>
+  </section>
+
+</div><!-- /container -->
+
+<footer>
+  <p style="margin-bottom:0.5rem;">🎹 やさしいピアノカフェ</p>
+  <p><a href="https://lin.ee/YNL3n7c">LINE公式</a> ／ <a href="https://www.youtube.com/@mamipianocafe">YouTube</a></p>
+</footer>
+
+</body>
+</html>

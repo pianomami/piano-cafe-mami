@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>無料相談・体験レッスン申し込み — やさしいピアノカフェ</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans JP', 'Segoe UI', sans-serif;
+    background:
+      linear-gradient(rgba(245,241,237,0.93), rgba(245,241,237,0.96)),
+      url('https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=1400&q=80') center/cover fixed;
+    color: #4A3F35;
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+  input, select, textarea, button { font-family: inherit; font-size: inherit; }
+  button { cursor: pointer; border: none; }
+
+  .page-header { text-align: center; margin-bottom: 2.5rem; }
+  .brand {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.9rem; color: #B5896A; font-weight: 700;
+    letter-spacing: 0.08em; margin-bottom: 0.75rem;
+    display: block;
+  }
+  .page-title { font-family: 'Noto Serif JP', serif; font-size: 1.6rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .page-sub { font-size: 0.88rem; color: #8B7B6E; line-height: 1.7; }
+
+  .form-card {
+    max-width: 600px; margin: 0 auto;
+    background: #fff; border-radius: 20px;
+    padding: 2rem 2rem 2.5rem;
+    border: 1px solid #DCC8B3;
+    box-shadow: 0 4px 24px rgba(61,43,31,0.06);
+  }
+
+  /* progress bar */
+  .progress-wrap { margin-bottom: 2rem; }
+  .progress-steps {
+    display: flex; align-items: center; justify-content: space-between;
+    position: relative; margin-bottom: 0.75rem;
+  }
+  .progress-steps::before {
+    content: ''; position: absolute;
+    left: 0; right: 0; top: 50%;
+    height: 2px; background: #DCC8B3;
+    transform: translateY(-50%); z-index: 0;
+  }
+  .progress-line {
+    position: absolute; left: 0; top: 50%;
+    height: 2px; background: #B5896A;
+    transform: translateY(-50%); z-index: 1;
+    transition: width 0.4s ease;
+  }
+  .step-dot {
+    width: 2rem; height: 2rem;
+    border-radius: 50%; z-index: 2; position: relative;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 700;
+    border: 2px solid #DCC8B3; background: #fff;
+    color: #DCC8B3; transition: all 0.3s;
+  }
+  .step-dot.active { border-color: #B5896A; background: #B5896A; color: #fff; }
+  .step-dot.done { border-color: #B5896A; background: #B5896A; color: #fff; }
+  .progress-labels {
+    display: flex; justify-content: space-between;
+  }
+  .progress-label {
+    font-size: 0.72rem; color: #A89888; text-align: center;
+    flex: 1; line-height: 1.3;
+  }
+  .progress-label.active { color: #B5896A; font-weight: 700; }
+
+  /* field groups */
+  .step-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 1.5rem; color: #4A3F35; }
+  .field { margin-bottom: 1.25rem; }
+  .label {
+    display: block; font-size: 0.85rem; font-weight: 700;
+    margin-bottom: 0.4rem; color: #4A3F35;
+  }
+  .label .req { color: #B5896A; margin-left: 0.25rem; }
+  .label .opt { color: #A89888; font-weight: 400; font-size: 0.78rem; margin-left: 0.25rem; }
+  input[type="text"], input[type="email"], input[type="url"], textarea, select {
+    border: 1.5px solid #DCC8B3; border-radius: 10px;
+    padding: 0.6rem 0.85rem; background: #fff; outline: none; width: 100%;
+    transition: border-color 0.2s;
+    font-size: 0.93rem;
+  }
+  input:focus, textarea:focus, select:focus { border-color: #B5896A; }
+  input.error, textarea.error, select.error { border-color: #e05454; }
+  .error-msg { color: #e05454; font-size: 0.78rem; margin-top: 0.3rem; }
+  textarea { resize: vertical; min-height: 90px; }
+
+  /* radio / checkbox groups */
+  .radio-group, .check-group { display: flex; flex-direction: column; gap: 0.5rem; }
+  .radio-row, .check-row {
+    display: flex; align-items: flex-start; gap: 0.6rem;
+    padding: 0.55rem 0.75rem; border-radius: 8px;
+    border: 1.5px solid #DCC8B3;
+    cursor: pointer; transition: border-color 0.15s, background 0.15s;
+    font-size: 0.88rem; line-height: 1.4;
+  }
+  .radio-row:hover, .check-row:hover { border-color: #B5896A; background: #EEE0D4; }
+  .radio-row.selected, .check-row.selected { border-color: #B5896A; background: #EEE0D4; }
+  .radio-row input, .check-row input { margin-top: 0.1rem; accent-color: #B5896A; flex-shrink: 0; }
+
+  /* inline grid for 2-col options */
+  .radio-group.grid2 {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;
+  }
+
+  /* hint text */
+  .hint { font-size: 0.78rem; color: #A89888; margin-top: 0.3rem; line-height: 1.5; }
+
+  /* nav buttons */
+  .btn-row {
+    display: flex; justify-content: space-between;
+    gap: 1rem; margin-top: 2rem;
+  }
+  .btn-back {
+    padding: 0.7rem 1.5rem; border-radius: 50px;
+    background: #fff; color: #8B7B6E;
+    border: 1.5px solid #DCC8B3; font-weight: 700;
+    font-size: 0.9rem; transition: background 0.2s;
+  }
+  .btn-back:hover { background: #EDE6DE; }
+  .btn-next {
+    flex: 1; padding: 0.7rem 1.5rem; border-radius: 50px;
+    background: #B5896A; color: #fff;
+    font-weight: 700; font-size: 0.95rem;
+    transition: background 0.2s, transform 0.15s;
+    box-shadow: 0 3px 12px rgba(224,123,84,0.3);
+  }
+  .btn-next:hover { background: #9B7355; transform: translateY(-1px); }
+  .btn-next:disabled { background: #DCC8B3; box-shadow: none; transform: none; cursor: default; }
+
+  /* confirm */
+  .confirm-block { margin-bottom: 1.5rem; }
+  .confirm-block-title {
+    font-size: 0.8rem; font-weight: 700; color: #B5896A;
+    letter-spacing: 0.08em; margin-bottom: 0.6rem; padding-bottom: 0.3rem;
+    border-bottom: 1px solid #DCC8B3;
+  }
+  .confirm-row { display: flex; gap: 1rem; margin-bottom: 0.4rem; font-size: 0.88rem; }
+  .confirm-key { color: #8B7B6E; flex-shrink: 0; min-width: 120px; }
+  .confirm-val { color: #4A3F35; font-weight: 500; }
+
+  /* thank you */
+  .thankyou {
+    text-align: center; padding: 1.5rem 0;
+  }
+  .thankyou-icon { font-size: 3.5rem; margin-bottom: 1rem; }
+  .thankyou-title { font-family: 'Noto Serif JP', serif; font-size: 1.4rem; font-weight: 700; margin-bottom: 0.75rem; }
+  .thankyou-sub { font-size: 0.9rem; color: #8B7B6E; line-height: 1.8; margin-bottom: 2rem; }
+  .thankyou-back {
+    display: inline-block; padding: 0.7rem 2rem; border-radius: 50px;
+    background: #B5896A; color: #fff; font-weight: 700; font-size: 0.9rem;
+    text-decoration: none; transition: background 0.2s;
+  }
+  .thankyou-back:hover { background: #9B7355; }
+
+  @media (max-width: 520px) {
+    .form-card { padding: 1.5rem 1.25rem 2rem; }
+    .radio-group.grid2 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const STEP_LABELS = ['基本情報', 'ピアノ歴', '目標', '動画提出'];
+const LS_KEY = 'piano_trainer_intake_draft_v1';
+
+const EMPTY = {
+  name: '', email: '', age: '', contact: '',
+  experience: '', frequency: '', past_lesson: '',
+  target_song: '', no_song: false, timeline: '', plan: '',
+  video_url: '', no_video: false, message: '',
+};
+
+function validate(step, data) {
+  const errs = {};
+  if (step === 0) {
+    if (!data.name.trim()) errs.name = 'お名前を入力してください';
+    if (!data.email.trim()) errs.email = 'メールアドレスを入力してください';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) errs.email = '正しいメールアドレスを入力してください';
+    if (!data.age) errs.age = '選択してください';
+    if (!data.contact) errs.contact = '選択してください';
+  }
+  if (step === 1) {
+    if (!data.experience) errs.experience = '選択してください';
+    if (!data.frequency) errs.frequency = '選択してください';
+    if (!data.past_lesson) errs.past_lesson = '選択してください';
+  }
+  if (step === 2) {
+    if (!data.no_song && !data.target_song.trim()) errs.target_song = '曲名を入力するか「まだ決まっていない」にチェックを入れてください';
+    if (!data.timeline) errs.timeline = '選択してください';
+    if (!data.plan) errs.plan = '選択してください';
+  }
+  return errs;
+}
+
+function Radio({ name, value, label, desc, checked, onChange }) {
+  return (
+    <label className={`radio-row ${checked ? 'selected' : ''}`}>
+      <input type="radio" name={name} value={value} checked={checked} onChange={() => onChange(value)} />
+      <span>
+        <span style={{fontWeight: checked ? 700 : 400}}>{label}</span>
+        {desc && <span style={{display:'block', fontSize:'0.78rem', color:'#8B7B6E', marginTop:'0.1rem'}}>{desc}</span>}
+      </span>
+    </label>
+  );
+}
+
+function Step0({ data, errors, set }) {
+  return (
+    <>
+      <div className="step-title">まずは基本情報を教えてください</div>
+
+      <div className="field">
+        <label className="label">お名前（本名またはあだ名でOK）<span className="req">*</span></label>
+        <input type="text" placeholder="例：花子さん、田中さん、まりちゃん…なんでもOK" value={data.name} onChange={e => set('name', e.target.value)} className={errors.name ? 'error' : ''} />
+        {errors.name && <div className="error-msg">{errors.name}</div>}
+      </div>
+
+      <div className="field">
+        <label className="label">メールアドレス<span className="req">*</span></label>
+        <input type="email" placeholder="例：hanako@example.com" value={data.email} onChange={e => set('email', e.target.value)} className={errors.email ? 'error' : ''} />
+        {errors.email && <div className="error-msg">{errors.email}</div>}
+      </div>
+
+      <div className="field">
+        <label className="label">年齢層<span className="req">*</span></label>
+        <div className={`radio-group ${errors.age ? 'error' : ''}`}>
+          {[['adult','大人（18歳以上）'],['parent','子ども（保護者が記入）']].map(([v, l]) => (
+            <Radio key={v} name="age" value={v} label={l} checked={data.age === v} onChange={v => set('age', v)} />
+          ))}
+        </div>
+        {errors.age && <div className="error-msg">{errors.age}</div>}
+      </div>
+
+      <div className="field">
+        <label className="label">ご連絡方法の希望<span className="req">*</span></label>
+        <div className="radio-group grid2">
+          {[['line','LINE'],['email','メール'],['either','どちらでも']].map(([v,l]) => (
+            <Radio key={v} name="contact" value={v} label={l} checked={data.contact === v} onChange={v => set('contact', v)} />
+          ))}
+        </div>
+        {errors.contact && <div className="error-msg">{errors.contact}</div>}
+      </div>
+    </>
+  );
+}
+
+function Step1({ data, errors, set }) {
+  return (
+    <>
+      <div className="step-title">ピアノ歴と練習状況を教えてください</div>
+
+      <div className="field">
+        <label className="label">ピアノ経験<span className="req">*</span></label>
+        <div className="radio-group">
+          {[
+            ['none','まったくゼロ'],
+            ['lt3m','3ヶ月未満（ほぼ初心者）'],
+            ['lt1y','半年〜1年程度'],
+            ['lt5y','2〜5年'],
+            ['5yplus','5年以上（ブランクあり含む）'],
+          ].map(([v,l]) => <Radio key={v} name="exp" value={v} label={l} checked={data.experience === v} onChange={v => set('experience', v)} />)}
+        </div>
+        {errors.experience && <div className="error-msg">{errors.experience}</div>}
+      </div>
+
+      <div className="field">
+        <label className="label">現在の練習頻度（またはしたい頻度）<span className="req">*</span></label>
+        <div className="radio-group grid2">
+          {[['daily','毎日'],['3w','週3〜4回'],['1w','週1〜2回'],['rare','月数回以下']].map(([v,l]) => (
+            <Radio key={v} name="freq" value={v} label={l} checked={data.frequency === v} onChange={v => set('frequency', v)} />
+          ))}
+        </div>
+        {errors.frequency && <div className="error-msg">{errors.frequency}</div>}
+      </div>
+
+      <div className="field">
+        <label className="label">これまでにレッスンを受けたことは？<span className="req">*</span></label>
+        <div className="radio-group">
+          {[
+            ['never','一度もない'],
+            ['past','昔受けていたが今はやめている'],
+            ['current','現在も受けている（他の先生から）'],
+          ].map(([v,l]) => <Radio key={v} name="lesson" value={v} label={l} checked={data.past_lesson === v} onChange={v => set('past_lesson', v)} />)}
+        </div>
+        {errors.past_lesson && <div className="error-msg">{errors.past_lesson}</div>}
+      </div>
+    </>
+  );
+}
+
+function Step2({ data, errors, set }) {
+  return (
+    <>
+      <div className="step-title">目標と希望プランを教えてください</div>
+
+      <div className="field">
+        <label className="label">弾きたい曲<span className="req">*</span></label>
+        <input
+          type="text" placeholder="例：ショパン ノクターン Op.9-2"
+          value={data.target_song}
+          onChange={e => set('target_song', e.target.value)}
+          disabled={data.no_song}
+          className={errors.target_song ? 'error' : ''}
+        />
+        <label className="check-row" style={{marginTop:'0.5rem', display:'flex', gap:'0.6rem', alignItems:'center', cursor:'pointer', fontSize:'0.85rem'}}>
+          <input type="checkbox" checked={data.no_song} onChange={e => set('no_song', e.target.checked)} style={{accentColor:'#B5896A'}} />
+          まだ決まっていない・相談したい
+        </label>
+        {errors.target_song && <div className="error-msg">{errors.target_song}</div>}
+        <div className="hint">難しすぎても大丈夫です。正直にお伝えして一緒に考えます。</div>
+      </div>
+
+      <div className="field">
+        <label className="label">目標期間のイメージ<span className="req">*</span></label>
+        <div className="radio-group grid2">
+          {[
+            ['1m','1ヶ月以内'],
+            ['3m','3ヶ月くらい'],
+            ['6m','6ヶ月くらい'],
+            ['slow','のんびり上達したい'],
+          ].map(([v,l]) => <Radio key={v} name="timeline" value={v} label={l} checked={data.timeline === v} onChange={v => set('timeline', v)} />)}
+        </div>
+        {errors.timeline && <div className="error-msg">{errors.timeline}</div>}
+      </div>
+
+      <div className="field">
+        <label className="label">気になるプラン<span className="req">*</span></label>
+        <div className="radio-group">
+          {[
+            ['program3','3ヶ月で弾ける！パーソナルコース（月3回×45分＋LINEサポート＋ミニ発表会 ¥54,000）'],
+            ['program1','まずは1ヶ月！パーソナルコース（月3回×45分＋LINEサポート ¥20,000）'],
+            ['mypace','マイペースレッスン（都度払い・45分 ¥7,000/回）'],
+            ['trial','まずは無料相談だけ（15分・完全無料）'],
+            ['consult','まだ決めていない・相談したい'],
+          ].map(([v,l]) => <Radio key={v} name="plan" value={v} label={l} checked={data.plan === v} onChange={v => set('plan', v)} />)}
+        </div>
+        {errors.plan && <div className="error-msg">{errors.plan}</div>}
+      </div>
+    </>
+  );
+}
+
+function Step3({ data, errors, set }) {
+  return (
+    <>
+      <div className="step-title">演奏動画と、その他ご要望を</div>
+
+      <div className="field">
+        <label className="label">演奏動画のURL<span className="opt">（任意）</span></label>
+        <input
+          type="url" placeholder="https://..."
+          value={data.video_url}
+          onChange={e => set('video_url', e.target.value)}
+          disabled={data.no_video}
+        />
+        <label className="check-row" style={{marginTop:'0.5rem', display:'flex', gap:'0.6rem', alignItems:'center', cursor:'pointer', fontSize:'0.85rem'}}>
+          <input type="checkbox" checked={data.no_video} onChange={e => set('no_video', e.target.checked)} style={{accentColor:'#B5896A'}} />
+          まだ動画がない・楽器を持っていない
+        </label>
+        <div className="hint">
+          YouTube の「限定公開」または Google ドライブの共有リンクでOKです。<br />
+          なくても申し込みできます。無料相談・体験レッスン時に一緒に確認します。
+        </div>
+      </div>
+
+      <div className="field">
+        <label className="label">悩み・伝えたいこと<span className="opt">（任意）</span></label>
+        <textarea
+          placeholder="例：昔やめてしまったことへの後悔、特定の箇所で詰まっている、など何でもどうぞ"
+          value={data.message}
+          onChange={e => set('message', e.target.value)}
+          rows={4}
+        />
+      </div>
+    </>
+  );
+}
+
+function ConfirmRow({ label, value }) {
+  if (!value) return null;
+  return (
+    <div className="confirm-row">
+      <span className="confirm-key">{label}</span>
+      <span className="confirm-val">{value}</span>
+    </div>
+  );
+}
+
+const PLAN_LABELS = {program3:'3ヶ月で弾ける！パーソナルコース',program1:'まずは1ヶ月！パーソナルコース',mypace:'マイペースレッスン',trial:'まずは無料相談',consult:'相談したい'};
+const AGE_LABELS = {adult:'大人',parent:'子ども（保護者記入）'};
+const EXP_LABELS = {none:'まったくゼロ',lt3m:'3ヶ月未満',lt1y:'半年〜1年',lt5y:'2〜5年','5yplus':'5年以上'};
+const FREQ_LABELS = {daily:'毎日',  '3w':'週3〜4回','1w':'週1〜2回',rare:'月数回以下'};
+const LESSON_LABELS = {never:'なし',past:'過去に受けていた',current:'現在も受けている'};
+const TIMELINE_LABELS = {'1m':'1ヶ月以内','3m':'3ヶ月','6m':'6ヶ月',slow:'のんびり'};
+const CONTACT_LABELS = {line:'LINE',email:'メール',either:'どちらでも'};
+
+function Confirm({ data }) {
+  return (
+    <>
+      <div className="step-title" style={{marginBottom:'1.25rem'}}>内容を確認してください</div>
+      <div className="confirm-block">
+        <div className="confirm-block-title">基本情報</div>
+        <ConfirmRow label="お名前" value={data.name} />
+        <ConfirmRow label="メール" value={data.email} />
+        <ConfirmRow label="年齢層" value={AGE_LABELS[data.age]} />
+        <ConfirmRow label="連絡方法" value={CONTACT_LABELS[data.contact]} />
+      </div>
+      <div className="confirm-block">
+        <div className="confirm-block-title">ピアノ歴</div>
+        <ConfirmRow label="経験" value={EXP_LABELS[data.experience]} />
+        <ConfirmRow label="練習頻度" value={FREQ_LABELS[data.frequency]} />
+        <ConfirmRow label="過去のレッスン" value={LESSON_LABELS[data.past_lesson]} />
+      </div>
+      <div className="confirm-block">
+        <div className="confirm-block-title">目標</div>
+        <ConfirmRow label="弾きたい曲" value={data.no_song ? '未定・相談したい' : data.target_song} />
+        <ConfirmRow label="目標期間" value={TIMELINE_LABELS[data.timeline]} />
+        <ConfirmRow label="希望プラン" value={PLAN_LABELS[data.plan]} />
+      </div>
+      {(data.video_url || data.no_video || data.message) && (
+        <div className="confirm-block">
+          <div className="confirm-block-title">その他</div>
+          <ConfirmRow label="動画" value={data.no_video ? '動画なし' : data.video_url || '—'} />
+          <ConfirmRow label="メッセージ" value={data.message || '—'} />
+        </div>
+      )}
+    </>
+  );
+}
+
+const LINE_URL = 'https://lin.ee/YNL3n7c';
+
+function ThankYou() {
+  return (
+    <div className="thankyou">
+      <div className="thankyou-icon">🎹</div>
+      <div className="thankyou-title">お申し込みありがとうございます！</div>
+      <div className="thankyou-sub">
+        3営業日以内に まみよりご連絡いたします。<br />
+        まずはのんびりお待ちください。
+      </div>
+      <div style={{
+        background:'#F0FAF4', border:'1.5px solid #06C755',
+        borderRadius:'12px', padding:'1.25rem 1.5rem',
+        marginBottom:'1.5rem', textAlign:'left'
+      }}>
+        <div style={{fontWeight:700, fontSize:'0.88rem', color:'#05a848', marginBottom:'0.4rem'}}>
+          📱 LINEでもつながっておきましょう
+        </div>
+        <div style={{fontSize:'0.83rem', color:'#4A3F35', lineHeight:1.7, marginBottom:'0.75rem'}}>
+          レッスン開始後の連絡・質問・練習報告はすべてLINEで行います。<br />
+          今のうちにお友だち追加しておくとスムーズです。
+        </div>
+        <a href={LINE_URL} target="_blank" rel="noopener" style={{
+          display:'inline-flex', alignItems:'center', gap:'0.4rem',
+          background:'#06C755', color:'#fff', borderRadius:'50px',
+          padding:'0.55rem 1.4rem', fontWeight:700, fontSize:'0.88rem',
+          textDecoration:'none'
+        }}>
+          <svg viewBox="0 0 24 24" style={{width:'1.1em',height:'1.1em',fill:'#fff',flexShrink:0}}><path d="M12 2C6.477 2 2 6.169 2 11.111c0 3.497 2.186 6.546 5.466 8.299l-.7 2.59 3.02-1.584c.807.224 1.661.345 2.543.345 5.523 0 10-4.169 10-9.111C22 6.169 17.523 2 12 2zm5.326 11.97l-1.365-1.015c-.17-.126-.41-.117-.568.026l-.766.696c-.103.094-.25.12-.38.066-.728-.308-1.56-.823-2.232-1.495-.671-.672-1.187-1.504-1.494-2.232-.054-.13-.028-.277.066-.38l.696-.766c.143-.158.152-.398.026-.568L9.294 6.937c-.143-.192-.397-.24-.597-.11l-1.565.976C6.878 7.98 6.75 8.227 6.77 8.48c.13 1.615.835 3.614 2.267 5.046 1.432 1.432 3.431 2.137 5.046 2.267.253.02.5-.108.677-.362l.976-1.565c.13-.2.082-.454-.41-.896z"/></svg>
+          LINEでお友だち追加する
+        </a>
+      </div>
+      <a className="thankyou-back" href="piano-trainer.html">← サービスページに戻る</a>
+    </div>
+  );
+}
+
+function App() {
+  const [step, setStep] = useState(0);
+  const [data, setData] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(LS_KEY)) || EMPTY; } catch { return EMPTY; }
+  });
+  const [errors, setErrors] = useState({});
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+
+  const set = (key, val) => setData(prev => ({ ...prev, [key]: val }));
+
+  useEffect(() => {
+    localStorage.setItem(LS_KEY, JSON.stringify(data));
+  }, [data]);
+
+  const totalSteps = 4;
+  const progressPct = step >= totalSteps ? 100 : (step / totalSteps) * 100;
+
+  const next = () => {
+    const errs = validate(step, data);
+    if (Object.keys(errs).length) { setErrors(errs); return; }
+    setErrors({});
+    setStep(s => s + 1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const back = () => { setStep(s => s - 1); setErrors({}); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+
+  const submit = async () => {
+    setSending(true);
+    try {
+      const endpoint = 'https://formspree.io/f/mnjwqwgk';
+      const body = {
+        名前: data.name, メール: data.email, 年齢層: AGE_LABELS[data.age],
+        連絡方法: CONTACT_LABELS[data.contact], 経験: EXP_LABELS[data.experience],
+        練習頻度: FREQ_LABELS[data.frequency], 過去レッスン: LESSON_LABELS[data.past_lesson],
+        弾きたい曲: data.no_song ? '未定・相談したい' : data.target_song,
+        目標期間: TIMELINE_LABELS[data.timeline], 希望プラン: PLAN_LABELS[data.plan],
+        動画URL: data.no_video ? 'なし（後日相談）' : data.video_url,
+        メッセージ: data.message,
+      };
+      const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(body) });
+      if (!res.ok) throw new Error('送信失敗');
+      localStorage.removeItem(LS_KEY);
+      setSent(true);
+    } catch {
+      alert('送信中にエラーが発生しました。お手数ですがSNSのDMよりご連絡ください。');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const isConfirm = step === totalSteps;
+  const isForm = step < totalSteps;
+
+  return (
+    <>
+      <div className="page-header">
+        <a className="brand" href="piano-trainer.html">やさしいピアノカフェ</a>
+        <h1 className="page-title">無料相談・体験レッスン申し込み</h1>
+        <p className="page-sub">やさしいピアノカフェ まみへのお申し込みフォームです。<br />まずは無料相談（15分）からどうぞ😊</p>
+      </div>
+
+      <div className="form-card">
+        {sent ? <ThankYou /> : (
+          <>
+            {/* Progress */}
+            <div className="progress-wrap">
+              <div className="progress-steps">
+                <div className="progress-line" style={{width: `${progressPct}%`}} />
+                {STEP_LABELS.map((_, i) => (
+                  <div key={i} className={`step-dot ${i < step ? 'done' : i === step ? 'active' : ''}`}>
+                    {i < step ? '✓' : i + 1}
+                  </div>
+                ))}
+              </div>
+              <div className="progress-labels">
+                {STEP_LABELS.map((l, i) => (
+                  <div key={i} className={`progress-label ${i === step ? 'active' : ''}`}>{l}</div>
+                ))}
+              </div>
+            </div>
+
+            {step === 0 && <Step0 data={data} errors={errors} set={set} />}
+            {step === 1 && <Step1 data={data} errors={errors} set={set} />}
+            {step === 2 && <Step2 data={data} errors={errors} set={set} />}
+            {step === 3 && <Step3 data={data} errors={errors} set={set} />}
+            {isConfirm && <Confirm data={data} />}
+
+            <div className="btn-row">
+              {step > 0 && (
+                <button className="btn-back" onClick={back}>← 戻る</button>
+              )}
+              {isForm && (
+                <button className="btn-next" onClick={next}>
+                  {step === totalSteps - 1 ? '確認する →' : '次へ →'}
+                </button>
+              )}
+              {isConfirm && (
+                <button className="btn-next" onClick={submit} disabled={sending}>
+                  {sending ? '送信中...' : '申し込みを送信する ✓'}
+                </button>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+    </>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+</body>
+</html>
