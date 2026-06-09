@@ -15,7 +15,7 @@
     background:
       linear-gradient(rgba(245,241,237,0.93), rgba(245,241,237,0.96)),
       url('https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=1400&q=80') center/cover fixed;
-    color: #4A3F35;
+    color: #5A4F45;
     min-height: 100vh;
     padding: 2rem 1rem 4rem;
   }
@@ -25,18 +25,18 @@
   .page-header { text-align: center; margin-bottom: 2.5rem; }
   .brand {
     font-family: 'Noto Serif JP', serif;
-    font-size: 0.9rem; color: #B5896A; font-weight: 700;
+    font-size: 0.9rem; color: #C9A989; font-weight: 700;
     letter-spacing: 0.08em; margin-bottom: 0.75rem;
     display: block;
   }
   .page-title { font-family: 'Noto Serif JP', serif; font-size: 1.6rem; font-weight: 700; margin-bottom: 0.5rem; }
-  .page-sub { font-size: 0.88rem; color: #8B7B6E; line-height: 1.7; }
+  .page-sub { font-size: 0.88rem; color: #9B8B7E; line-height: 1.7; }
 
   .form-card {
     max-width: 600px; margin: 0 auto;
     background: #fff; border-radius: 20px;
     padding: 2rem 2rem 2.5rem;
-    border: 1px solid #DCC8B3;
+    border: 1px solid #E5D9CE;
     box-shadow: 0 4px 24px rgba(61,43,31,0.06);
   }
 
@@ -49,12 +49,12 @@
   .progress-steps::before {
     content: ''; position: absolute;
     left: 0; right: 0; top: 50%;
-    height: 2px; background: #DCC8B3;
+    height: 2px; background: #E5D9CE;
     transform: translateY(-50%); z-index: 0;
   }
   .progress-line {
     position: absolute; left: 0; top: 50%;
-    height: 2px; background: #B5896A;
+    height: 2px; background: #C9A989;
     transform: translateY(-50%); z-index: 1;
     transition: width 0.4s ease;
   }
@@ -63,11 +63,11 @@
     border-radius: 50%; z-index: 2; position: relative;
     display: flex; align-items: center; justify-content: center;
     font-size: 0.8rem; font-weight: 700;
-    border: 2px solid #DCC8B3; background: #fff;
-    color: #DCC8B3; transition: all 0.3s;
+    border: 2px solid #E5D9CE; background: #fff;
+    color: #E5D9CE; transition: all 0.3s;
   }
-  .step-dot.active { border-color: #B5896A; background: #B5896A; color: #fff; }
-  .step-dot.done { border-color: #B5896A; background: #B5896A; color: #fff; }
+  .step-dot.active { border-color: #C9A989; background: #C9A989; color: #fff; }
+  .step-dot.done { border-color: #C9A989; background: #C9A989; color: #fff; }
   .progress-labels {
     display: flex; justify-content: space-between;
   }
@@ -75,24 +75,24 @@
     font-size: 0.72rem; color: #A89888; text-align: center;
     flex: 1; line-height: 1.3;
   }
-  .progress-label.active { color: #B5896A; font-weight: 700; }
+  .progress-label.active { color: #C9A989; font-weight: 700; }
 
   /* field groups */
-  .step-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 1.5rem; color: #4A3F35; }
+  .step-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 1.5rem; color: #5A4F45; }
   .field { margin-bottom: 1.25rem; }
   .label {
     display: block; font-size: 0.85rem; font-weight: 700;
-    margin-bottom: 0.4rem; color: #4A3F35;
+    margin-bottom: 0.4rem; color: #5A4F45;
   }
-  .label .req { color: #B5896A; margin-left: 0.25rem; }
+  .label .req { color: #C9A989; margin-left: 0.25rem; }
   .label .opt { color: #A89888; font-weight: 400; font-size: 0.78rem; margin-left: 0.25rem; }
   input[type="text"], input[type="email"], input[type="url"], textarea, select {
-    border: 1.5px solid #DCC8B3; border-radius: 10px;
+    border: 1.5px solid #E5D9CE; border-radius: 10px;
     padding: 0.6rem 0.85rem; background: #fff; outline: none; width: 100%;
     transition: border-color 0.2s;
     font-size: 0.93rem;
   }
-  input:focus, textarea:focus, select:focus { border-color: #B5896A; }
+  input:focus, textarea:focus, select:focus { border-color: #C9A989; }
   input.error, textarea.error, select.error { border-color: #e05454; }
   .error-msg { color: #e05454; font-size: 0.78rem; margin-top: 0.3rem; }
   textarea { resize: vertical; min-height: 90px; }
@@ -102,13 +102,13 @@
   .radio-row, .check-row {
     display: flex; align-items: flex-start; gap: 0.6rem;
     padding: 0.55rem 0.75rem; border-radius: 8px;
-    border: 1.5px solid #DCC8B3;
+    border: 1.5px solid #E5D9CE;
     cursor: pointer; transition: border-color 0.15s, background 0.15s;
     font-size: 0.88rem; line-height: 1.4;
   }
-  .radio-row:hover, .check-row:hover { border-color: #B5896A; background: #EEE0D4; }
-  .radio-row.selected, .check-row.selected { border-color: #B5896A; background: #EEE0D4; }
-  .radio-row input, .check-row input { margin-top: 0.1rem; accent-color: #B5896A; flex-shrink: 0; }
+  .radio-row:hover, .check-row:hover { border-color: #C9A989; background: #EEE0D4; }
+  .radio-row.selected, .check-row.selected { border-color: #C9A989; background: #EEE0D4; }
+  .radio-row input, .check-row input { margin-top: 0.1rem; accent-color: #C9A989; flex-shrink: 0; }
 
   /* inline grid for 2-col options */
   .radio-group.grid2 {
@@ -125,31 +125,31 @@
   }
   .btn-back {
     padding: 0.7rem 1.5rem; border-radius: 50px;
-    background: #fff; color: #8B7B6E;
-    border: 1.5px solid #DCC8B3; font-weight: 700;
+    background: #fff; color: #9B8B7E;
+    border: 1.5px solid #E5D9CE; font-weight: 700;
     font-size: 0.9rem; transition: background 0.2s;
   }
-  .btn-back:hover { background: #EDE6DE; }
+  .btn-back:hover { background: #F3F0ED; }
   .btn-next {
     flex: 1; padding: 0.7rem 1.5rem; border-radius: 50px;
-    background: #B5896A; color: #fff;
+    background: #C9A989; color: #fff;
     font-weight: 700; font-size: 0.95rem;
     transition: background 0.2s, transform 0.15s;
     box-shadow: 0 3px 12px rgba(224,123,84,0.3);
   }
-  .btn-next:hover { background: #9B7355; transform: translateY(-1px); }
-  .btn-next:disabled { background: #DCC8B3; box-shadow: none; transform: none; cursor: default; }
+  .btn-next:hover { background: #B89B7C; transform: translateY(-1px); }
+  .btn-next:disabled { background: #E5D9CE; box-shadow: none; transform: none; cursor: default; }
 
   /* confirm */
   .confirm-block { margin-bottom: 1.5rem; }
   .confirm-block-title {
-    font-size: 0.8rem; font-weight: 700; color: #B5896A;
+    font-size: 0.8rem; font-weight: 700; color: #C9A989;
     letter-spacing: 0.08em; margin-bottom: 0.6rem; padding-bottom: 0.3rem;
-    border-bottom: 1px solid #DCC8B3;
+    border-bottom: 1px solid #E5D9CE;
   }
   .confirm-row { display: flex; gap: 1rem; margin-bottom: 0.4rem; font-size: 0.88rem; }
-  .confirm-key { color: #8B7B6E; flex-shrink: 0; min-width: 120px; }
-  .confirm-val { color: #4A3F35; font-weight: 500; }
+  .confirm-key { color: #9B8B7E; flex-shrink: 0; min-width: 120px; }
+  .confirm-val { color: #5A4F45; font-weight: 500; }
 
   /* thank you */
   .thankyou {
@@ -157,13 +157,13 @@
   }
   .thankyou-icon { font-size: 3.5rem; margin-bottom: 1rem; }
   .thankyou-title { font-family: 'Noto Serif JP', serif; font-size: 1.4rem; font-weight: 700; margin-bottom: 0.75rem; }
-  .thankyou-sub { font-size: 0.9rem; color: #8B7B6E; line-height: 1.8; margin-bottom: 2rem; }
+  .thankyou-sub { font-size: 0.9rem; color: #9B8B7E; line-height: 1.8; margin-bottom: 2rem; }
   .thankyou-back {
     display: inline-block; padding: 0.7rem 2rem; border-radius: 50px;
-    background: #B5896A; color: #fff; font-weight: 700; font-size: 0.9rem;
+    background: #C9A989; color: #fff; font-weight: 700; font-size: 0.9rem;
     text-decoration: none; transition: background 0.2s;
   }
-  .thankyou-back:hover { background: #9B7355; }
+  .thankyou-back:hover { background: #B89B7C; }
 
   @media (max-width: 520px) {
     .form-card { padding: 1.5rem 1.25rem 2rem; }
@@ -214,7 +214,7 @@ function Radio({ name, value, label, desc, checked, onChange }) {
       <input type="radio" name={name} value={value} checked={checked} onChange={() => onChange(value)} />
       <span>
         <span style={{fontWeight: checked ? 700 : 400}}>{label}</span>
-        {desc && <span style={{display:'block', fontSize:'0.78rem', color:'#8B7B6E', marginTop:'0.1rem'}}>{desc}</span>}
+        {desc && <span style={{display:'block', fontSize:'0.78rem', color:'#9B8B7E', marginTop:'0.1rem'}}>{desc}</span>}
       </span>
     </label>
   );
@@ -319,7 +319,7 @@ function Step2({ data, errors, set }) {
           className={errors.target_song ? 'error' : ''}
         />
         <label className="check-row" style={{marginTop:'0.5rem', display:'flex', gap:'0.6rem', alignItems:'center', cursor:'pointer', fontSize:'0.85rem'}}>
-          <input type="checkbox" checked={data.no_song} onChange={e => set('no_song', e.target.checked)} style={{accentColor:'#B5896A'}} />
+          <input type="checkbox" checked={data.no_song} onChange={e => set('no_song', e.target.checked)} style={{accentColor:'#C9A989'}} />
           まだ決まっていない・相談したい
         </label>
         {errors.target_song && <div className="error-msg">{errors.target_song}</div>}
@@ -370,7 +370,7 @@ function Step3({ data, errors, set }) {
           disabled={data.no_video}
         />
         <label className="check-row" style={{marginTop:'0.5rem', display:'flex', gap:'0.6rem', alignItems:'center', cursor:'pointer', fontSize:'0.85rem'}}>
-          <input type="checkbox" checked={data.no_video} onChange={e => set('no_video', e.target.checked)} style={{accentColor:'#B5896A'}} />
+          <input type="checkbox" checked={data.no_video} onChange={e => set('no_video', e.target.checked)} style={{accentColor:'#C9A989'}} />
           まだ動画がない・楽器を持っていない
         </label>
         <div className="hint">
@@ -463,7 +463,7 @@ function ThankYou() {
         <div style={{fontWeight:700, fontSize:'0.88rem', color:'#05a848', marginBottom:'0.4rem'}}>
           📱 LINEでもつながっておきましょう
         </div>
-        <div style={{fontSize:'0.83rem', color:'#4A3F35', lineHeight:1.7, marginBottom:'0.75rem'}}>
+        <div style={{fontSize:'0.83rem', color:'#5A4F45', lineHeight:1.7, marginBottom:'0.75rem'}}>
           レッスン開始後の連絡・質問・練習報告はすべてLINEで行います。<br />
           今のうちにお友だち追加しておくとスムーズです。
         </div>
