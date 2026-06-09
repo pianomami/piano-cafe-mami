@@ -16,6 +16,7 @@
     --main:    #C9A989;   /* メインカラー */
     --main-dk: #B89B7C;   /* ダーク */
     --accent:  #A08C6B;   /* アクセント */
+    --accent-green: #A8C9A9; /* アクセント緑（新鮮感） */
     --text:    #5A4F45;   /* 本文 */
     --sub:     #9B8B7E;   /* サブテキスト */
     --border:  #E5D9CE;   /* ボーダー */
@@ -67,7 +68,7 @@
     font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em;
     margin-bottom: 1.5rem;
   }
-  .hero-limited-dot { width: 7px; height: 7px; background: #fff; border-radius: 50%; animation: pulse 1.5s infinite; }
+  .hero-limited-dot { width: 7px; height: 7px; background: var(--accent-green); border-radius: 50%; animation: pulse 1.5s infinite; }
   @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
 
   .hero-title { font-family: 'Noto Serif JP', serif; font-size: clamp(1.9rem, 5.5vw, 3.2rem); font-weight: 700; line-height: 1.4; margin-bottom: 1.25rem; }
@@ -195,7 +196,7 @@
   .faq-item { background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }
   .faq-q { width: 100%; text-align: left; padding: 1.1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 0.9rem; background: none; color: var(--text); gap: 0.75rem; }
   .faq-q:hover { background: var(--bg); }
-  .faq-arrow { color: var(--main); flex-shrink: 0; transition: transform 0.2s; }
+  .faq-arrow { color: var(--accent-green); flex-shrink: 0; transition: transform 0.2s; }
   .faq-arrow.open { transform: rotate(180deg); }
   .faq-a { padding: 0 1.25rem 1rem; font-size: 0.87rem; color: var(--sub); line-height: 1.8; border-top: 1px solid var(--border); }
 
@@ -265,7 +266,7 @@ function App() {
     <>
       {/* モニター帯 */}
       <div className="monitor-strip">
-        🎹 現在モニター募集中！初月50%オフ <span>先着4名・残りわずか</span>
+        🎹 現在モニター募集中！初月50%オフ <span>先着2名・限定募集</span>
       </div>
 
       {/* Nav */}
@@ -359,7 +360,7 @@ function App() {
               {['1曲を完全にマスターする','あなたの悩みにフォーカスした特別プログラム','3ヶ月で底力アップを実現','全レッスン後アーカイブ動画をお届け','LINEで質問いつでもOK','月1回グループ音楽カフェ 無料','3ヶ月後ミニ発表会で成果発表'].map((t,i) => (
                 <div key={i} style={{fontSize:'0.82rem', display:'flex', gap:'0.5rem', marginBottom:'0.35rem'}}><span>✅</span>{t}</div>
               ))}
-              <div style={{fontSize:'0.75rem', opacity:0.8, marginTop:'1rem', paddingTop:'0.75rem', borderTop:'1px solid rgba(255,255,255,0.3)'}}>定員5名 ／ お支払い：前日までにPayPay or 振込</div>
+              <div style={{fontSize:'0.75rem', opacity:0.8, marginTop:'1rem', paddingTop:'0.75rem', borderTop:'1px solid rgba(255,255,255,0.3)'}}>定員2名（モニター募集中・初月50%オフ） ／ お支払い：前日までにPayPay or 振込</div>
             </div>
 
             {/* 定期レッスン */}
