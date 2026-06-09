@@ -171,7 +171,8 @@
   .steps { display: flex; flex-direction: column; gap: 0; margin-top: 2rem; }
   .step { display: flex; gap: 1.25rem; padding-bottom: 2rem; position: relative; }
   .step:not(:last-child)::after { content: ''; position: absolute; left: 1.15rem; top: 2.6rem; bottom: 0; width: 2px; background: var(--border); }
-  .step-num { width: 2.4rem; height: 2.4rem; background: var(--main); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; flex-shrink: 0; }
+  .step-num { width: 2.4rem; height: 2.4rem; background: var(--main); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; flex-shrink: 0; transition: background 0.3s; }
+  .step:hover .step-num { background: var(--accent-green); }
   .step-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.3rem; }
   .step-desc { font-size: 0.87rem; color: var(--sub); line-height: 1.7; }
 
@@ -198,6 +199,7 @@
   .faq-q:hover { background: var(--bg); }
   .faq-arrow { color: var(--accent-green); flex-shrink: 0; transition: transform 0.2s; }
   .faq-arrow.open { transform: rotate(180deg); }
+  .faq-item:hover { border-color: var(--accent-green); box-shadow: 0 2px 12px rgba(168, 201, 169, 0.15); }
   .faq-a { padding: 0 1.25rem 1rem; font-size: 0.87rem; color: var(--sub); line-height: 1.8; border-top: 1px solid var(--border); }
 
   /* ── CTA ── */
@@ -236,7 +238,7 @@ const FAQS = [
   { q: '途中で目標の曲を変えたいときは？', a: '全力で相談に乗ります。ただし、途中変更は進捗に影響することもあるので、なぜ変えたいのかを一緒に考えた上で判断します。' },
   { q: '男性でも申し込めますか？', a: 'もちろんです。男性の受講者も歓迎します。「定年後の夢」「職場や家族をびっくりさせたい」という男性の方もいます。年齢・性別問わずお申し込みいただけます。' },
   { q: 'Zoomの使い方がわかりません', a: '画像つきのかんたんガイドをご用意しています。アプリの入れ方・つなぎ方・カメラの置き方まで丁寧に説明しています。ページ下部の「Zoomかんたんガイド」ボタンからご覧ください。また無料相談の時間にZoomの練習もできますので、安心してご連絡ください😊' },
-  { q: 'レッスンの曜日・時間は固定ですか？', a: '基本的に曜日と時間を固定してお届けします。ただし、どうしても都合がつかない日があっても大丈夫です😊 お互いの予定が合えば振替できますので、前日までにLINEでご連絡ください。' },
+  { q: 'レッスンの曜日・時間は固定ですか？', a: '平日の午前～昼過ぎが中心のレッスン時間帯になります。基本的に曜日と時間を固定してお届けしますが、スケジュール調整が必要な場合はご相談ください😊 お互いの予定が合えば振替も可能です。' },
   { q: '途中で続けられなくなった場合はどうなりますか？', a: 'やむを得ない事情がある場合はご相談ください。退会・返金に関する詳細は、ご入会後にお渡しする「入会のしおり」に記載しています。まずはお気軽にLINEでご連絡ください。' },
 ];
 
