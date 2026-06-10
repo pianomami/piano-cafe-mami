@@ -56,7 +56,7 @@
     text-align: center; padding: 3rem 1.5rem;
     background:
       linear-gradient(155deg, rgba(245,241,237,0.92) 0%, rgba(237,230,222,0.88) 100%),
-      url('https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=1400&q=80') center/cover no-repeat;
+      url('IMG_2433.JPG') center/cover no-repeat;
     position: relative; overflow: hidden;
   }
   .hero::after { content: '♩'; position: absolute; bottom: 5%; right: 4%; font-size: 10rem; opacity: 0.04; color: var(--main); pointer-events: none; }
@@ -343,6 +343,32 @@ function App() {
               💡 各プログラムの料金は、無料相談でご案内します
             </div>
           </p>
+
+          {/* レッスン風景 */}
+          <div style={{
+            marginTop: '2rem',
+            marginBottom: '2.5rem',
+            textAlign: 'center'
+          }}>
+            <h3 style={{
+              fontSize: '1rem',
+              fontWeight: '700',
+              marginBottom: '1rem',
+              color: 'var(--text)'
+            }}>
+              こんな風にレッスンを進めます 📸
+            </h3>
+            <img
+              src="IMG_2434.JPG"
+              alt="レッスン風景"
+              style={{
+                borderRadius: '16px',
+                boxShadow: '0 6px 24px rgba(200, 119, 58, 0.2)',
+                maxWidth: '100%',
+                height: 'auto'
+              }}
+            />
+          </div>
 
           {/* 全コース共通の特典 */}
           <div style={{background:'var(--main)', color:'#fff', borderRadius:'16px', padding:'1.25rem 1.5rem', marginBottom:'1.5rem', display:'flex', flexWrap:'wrap', gap:'1rem', alignItems:'center', justifyContent:'center'}}>
