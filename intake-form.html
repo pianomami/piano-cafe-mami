@@ -343,9 +343,9 @@ function Step2({ data, errors, set }) {
         <label className="label">気になるプラン<span className="req">*</span></label>
         <div className="radio-group">
           {[
-            ['program3','3ヶ月で弾ける！パーソナルコース（月3回×45分＋LINEサポート＋ミニ発表会 ¥54,000）'],
-            ['program1','まずは1ヶ月！パーソナルコース（月3回×45分＋LINEサポート ¥20,000）'],
-            ['mypace','マイペースレッスン（都度払い・45分 ¥7,000/回）'],
+            ['program3','3ヶ月集中パーソナルプログラム（1曲マスター）'],
+            ['program1','定期レッスン（月2回）'],
+            ['mypace','単発レッスン'],
             ['trial','まずは無料相談だけ（15分・完全無料）'],
             ['consult','まだ決めていない・相談したい'],
           ].map(([v,l]) => <Radio key={v} name="plan" value={v} label={l} checked={data.plan === v} onChange={v => set('plan', v)} />)}
@@ -402,7 +402,7 @@ function ConfirmRow({ label, value }) {
   );
 }
 
-const PLAN_LABELS = {program3:'3ヶ月で弾ける！パーソナルコース',program1:'まずは1ヶ月！パーソナルコース',mypace:'マイペースレッスン',trial:'まずは無料相談',consult:'相談したい'};
+const PLAN_LABELS = {program3:'3ヶ月集中パーソナルプログラム（1曲マスター）',program1:'定期レッスン（月2回）',mypace:'単発レッスン',trial:'まずは無料相談',consult:'相談したい'};
 const AGE_LABELS = {adult:'大人',parent:'子ども（保護者記入）'};
 const EXP_LABELS = {none:'まったくゼロ',lt3m:'3ヶ月未満',lt1y:'半年〜1年',lt5y:'2〜5年','5yplus':'5年以上'};
 const FREQ_LABELS = {daily:'毎日',  '3w':'週3〜4回','1w':'週1〜2回',rare:'月数回以下'};
@@ -513,8 +513,10 @@ function App() {
   const submit = async () => {
     setSending(true);
     try {
-      const endpoint = 'https://formspree.io/f/mnjwqwgk';
+      const endpoint = 'https://formspree.io/f/xdavdlyk';
       const body = {
+        _subject: `【新規申込】${data.name}さんからの申込`,
+        _replyto: data.email,
         名前: data.name, メール: data.email, 年齢層: AGE_LABELS[data.age],
         連絡方法: CONTACT_LABELS[data.contact], 経験: EXP_LABELS[data.experience],
         練習頻度: FREQ_LABELS[data.frequency], 過去レッスン: LESSON_LABELS[data.past_lesson],
