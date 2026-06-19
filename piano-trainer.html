@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>やさしいピアノカフェ — ピアノパーソナルトレーナー</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7/babel.min.js"></script>
 <style>
   /* ── カラー変数（ここを変えるだけで全体が変わります） ── */
   :root {
@@ -195,12 +192,13 @@
   /* ── FAQ ── */
   .faq-list { margin-top: 2rem; display: flex; flex-direction: column; gap: 0.7rem; }
   .faq-item { background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }
-  .faq-q { width: 100%; text-align: left; padding: 1.1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 0.9rem; background: none; color: var(--text); gap: 0.75rem; }
+  .faq-q { width: 100%; text-align: left; padding: 1.1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 0.9rem; background: none; color: var(--text); gap: 0.75rem; cursor: pointer; }
   .faq-q:hover { background: var(--bg); }
   .faq-arrow { color: var(--accent-green); flex-shrink: 0; transition: transform 0.2s; }
-  .faq-arrow.open { transform: rotate(180deg); }
+  .faq-item.open .faq-arrow { transform: rotate(180deg); }
   .faq-item:hover { border-color: var(--accent-green); box-shadow: 0 2px 12px rgba(168, 201, 169, 0.15); }
-  .faq-a { padding: 0 1.25rem 1rem; font-size: 0.87rem; color: var(--sub); line-height: 1.8; border-top: 1px solid var(--border); }
+  .faq-a { display: none; padding: 0 1.25rem 1rem; font-size: 0.87rem; color: var(--sub); line-height: 1.8; border-top: 1px solid var(--border); }
+  .faq-item.open .faq-a { display: block; }
 
   /* ── CTA ── */
   .cta-section { background: linear-gradient(135deg, var(--main), var(--main-dk)); color: #fff; text-align: center; }
@@ -220,333 +218,419 @@
 </style>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel">
-const { useState } = React;
-const INTAKE = 'https://pianomami.github.io/piano-cafe-mami/intake-form.html';
-const ZOOM_GUIDE = 'https://pianomami.github.io/piano-cafe-mami/zoom-guide.html';
-const FLOW_GUIDE = 'https://pianomami.github.io/piano-cafe-mami/flow-guide.html';
-const LINE_URL = 'https://lin.ee/YNL3n7c';
 
-const FAQS = [
-  { q: 'ピアノが全くゼロの状態でも参加できますか？', a: 'もちろんです。「手取り足取り、ゆっくり丁寧に」が まみの指導スタイルです。楽譜が読めなくても、鍵盤に触ったことがなくても、目標の曲に向けて着実に進めます。' },
-  { q: '3ヶ月でどのくらい弾けるようになりますか？', a: '現在のレベルと目標曲によって変わります。だからこそ無料相談・体験レッスンで「この曲は弾けるか」を正直にお伝えします。無理な場合は正直に言い、現実的な代替プランを一緒に考えます。' },
-  { q: 'ピアノ（電子ピアノ）はどんなものが必要ですか？', a: '61鍵以上のタッチ対応電子ピアノがあればOKです。お持ちでない方は体験後にご相談ください。ヘッドフォン対応なら夜間・早朝の練習もできます。' },
-  { q: 'カメラはスマートフォンでもOKですか？', a: 'はい、スマートフォンやタブレットで大丈夫です。大切なのは「鍵盤が映ること」。鍵盤が見えることで指使い・手の形まで確認できるので、むしろ上達が早くなります。' },
-  { q: 'ミニ発表会は絶対に参加しなくてはいけませんか？', a: '出席は完全に自由です。顔出しも不要で、「鍵盤だけ映す」スタイルでもOKです。発表会自体は他の受講生の演奏を聞くだけでも、大きな刺激と励みになります。' },
-  { q: '練習はどれくらい必要ですか？', a: '1日15〜30分が理想です。「忙しい大人」が無理なく続けられる量を前提にプランを作ります。練習ができなかった週があっても大丈夫。その都度調整します。' },
-  { q: '途中で目標の曲を変えたいときは？', a: '全力で相談に乗ります。ただし、途中変更は進捗に影響することもあるので、なぜ変えたいのかを一緒に考えた上で判断します。' },
-  { q: '男性でも申し込めますか？', a: 'もちろんです。男性の受講者も歓迎します。「定年後の夢」「職場や家族をびっくりさせたい」という男性の方もいます。年齢・性別問わずお申し込みいただけます。' },
-  { q: 'Zoomの使い方がわかりません', a: '画像つきのかんたんガイドをご用意しています。アプリの入れ方・つなぎ方・カメラの置き方まで丁寧に説明しています。ページ下部の「Zoomかんたんガイド」ボタンからご覧ください。また無料相談の時間にZoomの練習もできますので、安心してご連絡ください😊' },
-  { q: 'レッスンの曜日・時間は固定ですか？', a: '平日の午前～昼過ぎが中心のレッスン時間帯になります。基本的に曜日と時間を固定してお届けしますが、スケジュール調整が必要な場合はご相談ください😊 お互いの予定が合えば振替も可能です。' },
-  { q: '途中で続けられなくなった場合はどうなりますか？', a: 'やむを得ない事情がある場合はご相談ください。退会・返金に関する詳細は、ご入会後にお渡しする「入会のしおり」に記載しています。まずはお気軽にLINEでご連絡ください。' },
-];
+<!-- モニター帯 -->
+<div class="monitor-strip">
+  🎹 現在モニター募集中！初月50%オフ <span>先着2名・限定募集</span>
+</div>
 
-const STEPS = [
-  { title: '① 無料相談（15分・無料）', desc: 'まずZoomで15分、気軽にお話しします。Zoomが初めての方の練習にもなります。弾きたい曲・不安なことを何でも聞いてください。申し込みの強制は一切ありません。' },
-  { title: '② 体験レッスン（30分・1,000円）', desc: '実際にレッスンを体験していただきます。目標曲の難易度チェックと、3ヶ月で弾けるかを正直にお伝えします。当日PayPayまたは振込でのお支払い。' },
-  { title: '③ 演奏動画を送る（任意）', desc: '弾いている様子の動画を送っていただくと、レベルや課題をより正確に把握できます。まったくゼロの方は「ドレミを弾いてみた」でもOK。動画が難しい場合はそのままレッスンスタートでも大丈夫です😊' },
-  { title: '④ 12週間ロードマップの作成', desc: '目標曲から逆算して「何週目に何ができる状態か」を細かく設定した12週間プランを作成します。ゴールが見えているから、迷わず練習できます。' },
-  { title: '⑤ レッスン＆全力サポートスタート', desc: 'レッスン＋練習状況の報告＋「毎日まみにLINE」サポートでお届けします。3ヶ月で弾ける！ミニ発表会もあります。' },
-];
+<!-- Nav -->
+<nav>
+  <div class="nav-brand">やさしいピアノカフェ <span style="font-size:0.75rem;opacity:0.7;font-weight:400">by まみ</span></div>
+  <a class="nav-cta" href="https://pianomami.github.io/piano-cafe-mami/intake-form.html">まず無料相談する</a>
+</nav>
 
-function FaqItem({ faq }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="faq-item">
-      <button className="faq-q" onClick={() => setOpen(!open)}>
-        <span>{faq.q}</span>
-        <span className={`faq-arrow ${open ? 'open' : ''}`}>▼</span>
-      </button>
-      {open && <div className="faq-a">{faq.a}</div>}
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-limited">
+    <span class="hero-limited-dot"></span>
+    3ヶ月限定・5名まで
+  </div>
+  <p style="font-size:0.8rem;color:var(--sub);letter-spacing:0.12em;margin-bottom:0.5rem">やさしいピアノカフェ</p>
+  <h1 class="hero-title">
+    弾きたい曲が、<em>弾ける。</em><br>
+    ピアノパーソナルトレーナー
+  </h1>
+  <p class="hero-sub">
+    娘の結婚式で弾きたい。定年後の夢をかなえたい。<br>
+    イベントでサプライズしたい。<br>
+    あなたの「弾きたい」に、まみが全力でお応えします。
+  </p>
+  <p class="hero-name">大手音楽教室 25年指導歴 ／ コンクール入賞者多数輩出</p>
+  <div class="hero-cta-wrap">
+    <a class="hero-cta" href="https://pianomami.github.io/piano-cafe-mami/intake-form.html">まず無料相談（15分）を申し込む</a>
+    <span class="hero-cta-note">15分 ／ 完全無料</span>
+    <a class="line-btn" href="https://lin.ee/YNL3n7c" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.169 2 11.111c0 3.497 2.186 6.546 5.466 8.299l-.7 2.59 3.02-1.584c.807.224 1.661.345 2.543.345 5.523 0 10-4.169 10-9.111C22 6.169 17.523 2 12 2zm5.326 11.97l-1.365-1.015c-.17-.126-.41-.117-.568.026l-.766.696c-.103.094-.25.12-.38.066-.728-.308-1.56-.823-2.232-1.495-.671-.672-1.187-1.504-1.494-2.232-.054-.13-.028-.277.066-.38l.696-.766c.143-.158.152-.398.026-.568L9.294 6.937c-.143-.192-.397-.24-.597-.11l-1.565.976C6.878 7.98 6.75 8.227 6.77 8.48c.13 1.615.835 3.614 2.267 5.046 1.432 1.432 3.431 2.137 5.046 2.267.253.02.5-.108.677-.362l.976-1.565c.13-.2.082-.454-.41-.896z"/></svg>
+      LINEで気軽に相談する
+    </a>
+  </div>
+</section>
+
+<!-- こんな方へ -->
+<section class="empathy-bg">
+  <div class="container">
+    <div class="sec-label">FOR YOU</div>
+    <h2 class="sec-title">こんな気持ち、ありませんか？</h2>
+    <div class="empathy-grid">
+      <div class="empathy-item"><span class="empathy-icon">💍</span><span class="empathy-text">娘の結婚式で「アメイジング・グレイス」を弾いてサプライズしたい</span></div>
+      <div class="empathy-item"><span class="empathy-icon">🎉</span><span class="empathy-text">イベントやパーティーでピアノを弾いて、みんなをびっくりさせたい</span></div>
+      <div class="empathy-item"><span class="empathy-icon">🌸</span><span class="empathy-text">定年後に時間ができた。子どもの頃からの夢だったピアノを今こそやってみたい</span></div>
+      <div class="empathy-item"><span class="empathy-icon">🧠</span><span class="empathy-text">脳の活性化・認知症予防に、楽しみながらピアノを続けたい</span></div>
+      <div class="empathy-item"><span class="empathy-icon">📍</span><span class="empathy-text">近くに良い音楽教室がない。でもオンラインは不安で、先生と話しながら習いたい</span></div>
+      <div class="empathy-item"><span class="empathy-icon">🤝</span><span class="empathy-text">0からゆっくり手取り足取り、楽しく話しながら習える教室を探している</span></div>
     </div>
-  );
-}
+    <p style="margin-top:1.5rem;font-size:0.9rem;color:var(--main);font-weight:700;text-align:center">
+      ← そのすべてが、このプログラムで叶います。
+    </p>
+  </div>
+</section>
 
-function App() {
-  return (
-    <>
-      {/* モニター帯 */}
-      <div className="monitor-strip">
-        🎹 現在モニター募集中！初月50%オフ <span>先着2名・限定募集</span>
+<!-- プログラム -->
+<section class="program-bg">
+  <div class="container">
+    <div class="sec-label">PROGRAMS</div>
+    <h2 class="sec-title">あなたに合った<br>コースを選べます</h2>
+    <p class="sec-sub">
+      ピアノが初めての方も大歓迎。<br>
+      全レッスン後にアーカイブ動画をお届けします。<br>
+      何度でも見返して、自分のペースで上達できます。<br>
+      <div style="background:var(--accent-green);color:#fff;border-radius:12px;padding:1rem;margin-top:1.5rem;text-align:center;font-size:0.95rem;font-weight:700">
+        💡 各プログラムの料金は、無料相談でご案内します
+      </div>
+    </p>
+
+    <!-- 全コース共通の特典 -->
+    <div style="background:var(--main);color:#fff;border-radius:16px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:center">
+      <div style="font-size:0.82rem;font-weight:700">📹 全レッスン後アーカイブ動画をお届け</div>
+      <div style="font-size:0.82rem;font-weight:700">💬 LINEサポートあり</div>
+      <div style="font-size:0.82rem;font-weight:700">☕ 月1回グループ音楽カフェ（無料参加）</div>
+      <div style="font-size:0.82rem;font-weight:700">🎹 初心者の方も大歓迎</div>
+    </div>
+
+    <!-- メインコース2つ -->
+    <div style="display:grid;gap:1rem;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));margin-bottom:1rem">
+      <!-- 1曲マスター -->
+      <div style="background:var(--main);border-radius:20px;padding:1.75rem;color:#fff;box-shadow:0 6px 24px rgba(181,137,106,0.35)">
+        <div style="font-size:0.72rem;font-weight:700;letter-spacing:0.1em;background:rgba(255,255,255,0.2);border-radius:50px;padding:0.2rem 0.8rem;display:inline-block;margin-bottom:0.75rem">🌟 本気で上達したい方へ</div>
+        <div style="font-family:'Noto Serif JP',serif;font-size:1.25rem;font-weight:700;margin-bottom:0.25rem">3ヶ月集中パーソナルプログラム</div>
+        <div style="font-size:0.85rem;opacity:0.88;margin-bottom:1.1rem">あなたの悩みと目標に集中</div>
+        <div style="font-size:0.82rem;display:flex;gap:0.5rem;margin-bottom:0.35rem"><span>✅</span>1曲を完全にマスターする</div>
+        <div style="font-size:0.82rem;display:flex;gap:0.5rem;margin-bottom:0.35rem"><span>✅</span>あなたの悩みにフォーカスした特別プログラム</div>
+        <div style="font-size:0.82rem;display:flex;gap:0.5rem;margin-bottom:0.35rem"><span>✅</span>3ヶ月で底力アップを実現</div>
+        <div style="font-size:0.82rem;display:flex;gap:0.5rem;margin-bottom:0.35rem"><span>✅</span>全レッスン後アーカイブ動画をお届け</div>
+        <div style="font-size:0.82rem;display:flex;gap:0.5rem;margin-bottom:0.35rem"><span>✅</span>「毎日まみにLINE」サポート付き</div>
+        <div style="font-size:0.82rem;display:flex;gap:0.5rem;margin-bottom:0.35rem"><span>✅</span>月1回グループ音楽カフェ 無料</div>
+        <div style="font-size:0.82rem;display:flex;gap:0.5rem;margin-bottom:0.35rem"><span>✅</span>3ヶ月後ミニ発表会で成果発表</div>
+        <div style="font-size:0.75rem;opacity:0.8;margin-top:1rem;padding-top:0.75rem;border-top:1px solid rgba(255,255,255,0.3)">定員2名（モニター募集中・初月50%オフ） ／ お支払い：前日までにPayPay or 振込</div>
       </div>
 
-      {/* Nav */}
-      <nav>
-        <div className="nav-brand">やさしいピアノカフェ <span style={{fontSize:'0.75rem', opacity:0.7, fontWeight:400}}>by まみ</span></div>
-        <a className="nav-cta" href={INTAKE}>まず無料相談する</a>
-      </nav>
+      <!-- 定期レッスン -->
+      <div style="background:var(--card);border-radius:20px;padding:1.75rem;border:2px solid var(--border);box-shadow:0 4px 16px rgba(0,0,0,0.06)">
+        <div style="font-size:0.72rem;font-weight:700;letter-spacing:0.1em;background:var(--bg2);color:var(--main);border-radius:50px;padding:0.2rem 0.8rem;display:inline-block;margin-bottom:0.75rem">🎹 継続して楽しみたい方へ</div>
+        <div style="font-family:'Noto Serif JP',serif;font-size:1.25rem;font-weight:700;margin-bottom:0.25rem">定期レッスン</div>
+        <div style="font-size:0.85rem;color:var(--sub);margin-bottom:1.1rem">30分 × 月2回</div>
+        <div style="font-size:0.82rem;display:flex;gap:0.5rem;margin-bottom:0.35rem;color:var(--text)"><span>✅</span>全レッスン後アーカイブ動画お届け</div>
+        <div style="font-size:0.82rem;display:flex;gap:0.5rem;margin-bottom:0.35rem;color:var(--text)"><span>✅</span>レッスン後フィードバックメッセージ</div>
+        <div style="font-size:0.82rem;display:flex;gap:0.5rem;margin-bottom:0.35rem;color:var(--text)"><span>✅</span>週1回までLINEで質問・相談OK</div>
+        <div style="font-size:0.82rem;display:flex;gap:0.5rem;margin-bottom:0.35rem;color:var(--text)"><span>✅</span>月1グループ音楽カフェ 無料</div>
+        <div style="font-size:0.75rem;color:var(--sub);margin-top:1rem;padding-top:0.75rem;border-top:1px solid var(--border)">お支払い：前日までにPayPay or 振込</div>
+      </div>
+    </div>
 
-      {/* Hero */}
-      <section className="hero">
-        <div className="hero-limited">
-          <span className="hero-limited-dot" />
-          3ヶ月限定・5名まで
+    <!-- 単発・カフェ -->
+    <div style="display:grid;gap:1rem;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));margin-bottom:1.5rem">
+      <div class="regular-card" style="margin:0">
+        <div class="regular-title">🎵 単発レッスン</div>
+        <div class="regular-price" style="color:var(--main)">受けたい時に予約OK</div>
+        <div class="regular-desc">都度払い・30分。アーカイブ動画つき。詳細はお話の時にご説明します。</div>
+      </div>
+      <div class="regular-card" style="margin:0">
+        <div class="regular-title">☕ グループ音楽カフェ</div>
+        <div class="regular-price">受講生は無料・単発の方は300円</div>
+        <div class="regular-desc">月1回・Zoomで開催。音楽の話・好きな曲の紹介・日常のおしゃべり。顔出し不要。ゆったり楽しみましょう😊（一般の方は500円）</div>
+      </div>
+      <div class="regular-card" style="margin:0">
+        <div class="regular-title">💬 個人おしゃべりカフェ</div>
+        <div class="regular-price" style="color:var(--main)">1対1でゆったり</div>
+        <div class="regular-desc">30分。まみとお話しして癒されましょう😊 料金はお問い合わせください。</div>
+      </div>
+    </div>
+
+    <!-- まず相談・体験から -->
+    <div style="background:var(--card);border-radius:16px;padding:1.5rem;border:1px solid var(--border)">
+      <div style="font-size:0.75rem;font-weight:700;color:var(--main);letter-spacing:0.12em;margin-bottom:0.75rem">FIRST STEP — まずはここから</div>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap">
+        <div style="flex:1;min-width:220px;background:var(--bg);border-radius:12px;padding:1.1rem">
+          <div style="font-size:0.78rem;font-weight:700;color:var(--main);margin-bottom:0.3rem">🎙️ 無料相談（15分）</div>
+          <div style="font-family:'Noto Serif JP',serif;font-size:1.5rem;font-weight:700;margin-bottom:0.4rem">無料</div>
+          <div style="font-size:0.82rem;color:var(--sub);line-height:1.7">Zoom・LINE・FaceTimeで気軽にお話しします。<br><strong>初めての方の練習にも◎</strong><br>弾きたい曲・不安なことを<br>何でもどうぞ</div>
         </div>
-        <p style={{fontSize:'0.8rem', color:'var(--sub)', letterSpacing:'0.12em', marginBottom:'0.5rem'}}>やさしいピアノカフェ</p>
-        <h1 className="hero-title">
-          弾きたい曲が、<em>弾ける。</em><br />
-          ピアノパーソナルトレーナー
-        </h1>
-        <p className="hero-sub">
-          娘の結婚式で弾きたい。定年後の夢をかなえたい。<br />
-          イベントでサプライズしたい。<br />
-          あなたの「弾きたい」に、まみが全力でお応えします。
-        </p>
-        <p className="hero-name">大手音楽教室 25年指導歴 ／ コンクール入賞者多数輩出</p>
-        <div className="hero-cta-wrap">
-          <a className="hero-cta" href={INTAKE}>まず無料相談（15分）を申し込む</a>
-          <span className="hero-cta-note">15分 ／ 完全無料</span>
-          <a className="line-btn" href={LINE_URL} target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.169 2 11.111c0 3.497 2.186 6.546 5.466 8.299l-.7 2.59 3.02-1.584c.807.224 1.661.345 2.543.345 5.523 0 10-4.169 10-9.111C22 6.169 17.523 2 12 2zm5.326 11.97l-1.365-1.015c-.17-.126-.41-.117-.568.026l-.766.696c-.103.094-.25.12-.38.066-.728-.308-1.56-.823-2.232-1.495-.671-.672-1.187-1.504-1.494-2.232-.054-.13-.028-.277.066-.38l.696-.766c.143-.158.152-.398.026-.568L9.294 6.937c-.143-.192-.397-.24-.597-.11l-1.565.976C6.878 7.98 6.75 8.227 6.77 8.48c.13 1.615.835 3.614 2.267 5.046 1.432 1.432 3.431 2.137 5.046 2.267.253.02.5-.108.677-.362l.976-1.565c.13-.2.082-.454-.41-.896z"/></svg>
-            LINEで気軽に相談する
-          </a>
+        <div style="flex:1;min-width:220px;background:var(--bg);border-radius:12px;padding:1.1rem">
+          <div style="font-size:0.78rem;font-weight:700;color:var(--main);margin-bottom:0.3rem">🎹 体験レッスン（30分）</div>
+          <div style="font-family:'Noto Serif JP',serif;font-size:1.5rem;font-weight:700;margin-bottom:0.4rem">1,000円</div>
+          <div style="font-size:0.82rem;color:var(--sub);line-height:1.7">実際のレッスンをお試し。<br>目標曲の難易度チェック＆<br>コースのご説明。<br>当日PayPay or 振込でOK</div>
         </div>
-      </section>
+      </div>
+    </div>
+  </div>
+</section>
 
-      {/* こんな方へ */}
-      <section className="empathy-bg">
-        <div className="container">
-          <div className="sec-label">FOR YOU</div>
-          <h2 className="sec-title">こんな気持ち、ありませんか？</h2>
-          <div className="empathy-grid">
-            {[
-              { icon: '💍', text: '娘の結婚式で「アメイジング・グレイス」を弾いてサプライズしたい' },
-              { icon: '🎉', text: 'イベントやパーティーでピアノを弾いて、みんなをびっくりさせたい' },
-              { icon: '🌸', text: '定年後に時間ができた。子どもの頃からの夢だったピアノを今こそやってみたい' },
-              { icon: '🧠', text: '脳の活性化・認知症予防に、楽しみながらピアノを続けたい' },
-              { icon: '📍', text: '近くに良い音楽教室がない。でもオンラインは不安で、先生と話しながら習いたい' },
-              { icon: '🤝', text: '0からゆっくり手取り足取り、楽しく話しながら習える教室を探している' },
-            ].map((item, i) => (
-              <div key={i} className="empathy-item">
-                <span className="empathy-icon">{item.icon}</span>
-                <span className="empathy-text">{item.text}</span>
-              </div>
-            ))}
-          </div>
-          <p style={{marginTop:'1.5rem', fontSize:'0.9rem', color:'var(--main)', fontWeight:'700', textAlign:'center'}}>
-            ← そのすべてが、このプログラムで叶います。
-          </p>
+<!-- 普通のレッスンと何が違うのか -->
+<section>
+  <div class="container">
+    <div class="sec-label">WHY MAMI</div>
+    <h2 class="sec-title">「普通のレッスン」と<br>何が違うのか</h2>
+    <div class="diff-grid">
+      <div class="diff-card">
+        <div class="diff-icon">🗺️</div>
+        <div class="diff-title">最初にゴールと道順を決める</div>
+        <div class="diff-desc">「どこへ向かうか」「あと何週かかるか」を最初に明確にします。ゴールが見えていれば、練習が楽しくなります。</div>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">🔍</div>
+        <div class="diff-title">正直な難易度チェック</div>
+        <div class="diff-desc">「この曲は今の実力では3ヶ月では難しい」と正直に言える先生です。遠回りしないための本音のアドバイスを大切にしています。</div>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">📱</div>
+        <div class="diff-title">練習中もサポート</div>
+        <div class="diff-desc">レッスンの時間だけでなく、練習中に詰まった時も連絡OK。LINEやメールで質問できます。一人で悩まなくていい環境を作ります。</div>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">🎵</div>
+        <div class="diff-title">3ヶ月後にミニ発表会</div>
+        <div class="diff-desc">目標に向かって練習する「期限」と「発表の場」があることで、モチベーションが格段に上がります。終わった後の達成感は格別です。</div>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">👥</div>
+        <div class="diff-title">50〜70代の方を熟知</div>
+        <div class="diff-desc">時間の使い方、脳の使い方、モチベーションの保ち方など、大人の学び方を25年間研究し続けてきました。</div>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">💬</div>
+        <div class="diff-title">お話ししながら楽しく</div>
+        <div class="diff-desc">音楽を通じた会話や雑談も大切にしています。「先生と話すのが楽しみ」と言ってもらえるようなレッスンを目指しています。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 受講の流れ -->
+<section style="background:var(--card)">
+  <div class="container">
+    <div class="sec-label">HOW IT WORKS</div>
+    <h2 class="sec-title">申し込みから<br>発表会までの流れ</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div>
+          <div class="step-title">① 無料相談（15分・無料）</div>
+          <div class="step-desc">まずZoomで15分、気軽にお話しします。Zoomが初めての方の練習にもなります。弾きたい曲・不安なことを何でも聞いてください。申し込みの強制は一切ありません。</div>
         </div>
-      </section>
-
-      {/* プログラム */}
-      <section className="program-bg">
-        <div className="container">
-          <div className="sec-label">PROGRAMS</div>
-          <h2 className="sec-title">あなたに合った<br />コースを選べます</h2>
-          <p className="sec-sub">
-            ピアノが初めての方も大歓迎。<br />
-            全レッスン後にアーカイブ動画をお届けします。<br />
-            何度でも見返して、自分のペースで上達できます。<br />
-            <div style={{background:'var(--accent-green)', color:'#fff', borderRadius:'12px', padding:'1rem', marginTop:'1.5rem', textAlign:'center', fontSize:'0.95rem', fontWeight:'700'}}>
-              💡 各プログラムの料金は、無料相談でご案内します
-            </div>
-          </p>
-
-          {/* 全コース共通の特典 */}
-          <div style={{background:'var(--main)', color:'#fff', borderRadius:'16px', padding:'1.25rem 1.5rem', marginBottom:'1.5rem', display:'flex', flexWrap:'wrap', gap:'1rem', alignItems:'center', justifyContent:'center'}}>
-            {['📹 全レッスン後アーカイブ動画をお届け', '💬 LINEサポートあり', '☕ 月1回グループ音楽カフェ（無料参加）', '🎹 初心者の方も大歓迎'].map((t,i) => (
-              <div key={i} style={{fontSize:'0.82rem', fontWeight:'700'}}>{t}</div>
-            ))}
-          </div>
-
-          {/* メインコース2つ */}
-          <div style={{display:'grid', gap:'1rem', gridTemplateColumns:'repeat(auto-fit, minmax(280px, 1fr))', marginBottom:'1rem'}}>
-            {/* 1曲マスター */}
-            <div style={{background:'var(--main)', borderRadius:'20px', padding:'1.75rem', color:'#fff', boxShadow:'0 6px 24px rgba(181,137,106,0.35)'}}>
-              <div style={{fontSize:'0.72rem', fontWeight:'700', letterSpacing:'0.1em', background:'rgba(255,255,255,0.2)', borderRadius:'50px', padding:'0.2rem 0.8rem', display:'inline-block', marginBottom:'0.75rem'}}>🌟 本気で上達したい方へ</div>
-              <div style={{fontFamily:'Noto Serif JP, serif', fontSize:'1.25rem', fontWeight:'700', marginBottom:'0.25rem'}}>3ヶ月集中パーソナルプログラム</div>
-              <div style={{fontSize:'0.85rem', opacity:0.88, marginBottom:'1.1rem'}}>あなたの悩みと目標に集中</div>
-              {['1曲を完全にマスターする','あなたの悩みにフォーカスした特別プログラム','3ヶ月で底力アップを実現','全レッスン後アーカイブ動画をお届け','「毎日まみにLINE」サポート付き','月1回グループ音楽カフェ 無料','3ヶ月後ミニ発表会で成果発表'].map((t,i) => (
-                <div key={i} style={{fontSize:'0.82rem', display:'flex', gap:'0.5rem', marginBottom:'0.35rem'}}><span>✅</span>{t}</div>
-              ))}
-              <div style={{fontSize:'0.75rem', opacity:0.8, marginTop:'1rem', paddingTop:'0.75rem', borderTop:'1px solid rgba(255,255,255,0.3)'}}>定員2名（モニター募集中・初月50%オフ） ／ お支払い：前日までにPayPay or 振込</div>
-            </div>
-
-            {/* 定期レッスン */}
-            <div style={{background:'var(--card)', borderRadius:'20px', padding:'1.75rem', border:'2px solid var(--border)', boxShadow:'0 4px 16px rgba(0,0,0,0.06)'}}>
-              <div style={{fontSize:'0.72rem', fontWeight:'700', letterSpacing:'0.1em', background:'var(--bg2)', color:'var(--main)', borderRadius:'50px', padding:'0.2rem 0.8rem', display:'inline-block', marginBottom:'0.75rem'}}>🎹 継続して楽しみたい方へ</div>
-              <div style={{fontFamily:'Noto Serif JP, serif', fontSize:'1.25rem', fontWeight:'700', marginBottom:'0.25rem'}}>定期レッスン</div>
-              <div style={{fontSize:'0.85rem', color:'var(--sub)', marginBottom:'1.1rem'}}>30分 × 月2回</div>
-              {['全レッスン後アーカイブ動画お届け','レッスン後フィードバックメッセージ','週1回までLINEで質問・相談OK','月1グループ音楽カフェ 無料'].map((t,i) => (
-                <div key={i} style={{fontSize:'0.82rem', display:'flex', gap:'0.5rem', marginBottom:'0.35rem', color:'var(--text)'}}><span>✅</span>{t}</div>
-              ))}
-              <div style={{fontSize:'0.75rem', color:'var(--sub)', marginTop:'1rem', paddingTop:'0.75rem', borderTop:'1px solid var(--border)'}}>お支払い：前日までにPayPay or 振込</div>
-            </div>
-          </div>
-
-          {/* 単発・カフェ */}
-          <div style={{display:'grid', gap:'1rem', gridTemplateColumns:'repeat(auto-fit, minmax(220px, 1fr))', marginBottom:'1.5rem'}}>
-            <div className="regular-card" style={{margin:0}}>
-              <div className="regular-title">🎵 単発レッスン</div>
-              <div className="regular-price" style={{color:'var(--main)'}}>受けたい時に予約OK</div>
-              <div className="regular-desc">都度払い・30分。アーカイブ動画つき。詳細はお話の時にご説明します。</div>
-            </div>
-            <div className="regular-card" style={{margin:0}}>
-              <div className="regular-title">☕ グループ音楽カフェ</div>
-              <div className="regular-price">受講生は無料・単発の方は300円</div>
-              <div className="regular-desc">月1回・Zoomで開催。音楽の話・好きな曲の紹介・日常のおしゃべり。顔出し不要。ゆったり楽しみましょう😊（一般の方は500円）</div>
-            </div>
-            <div className="regular-card" style={{margin:0}}>
-              <div className="regular-title">💬 個人おしゃべりカフェ</div>
-              <div className="regular-price" style={{color:'var(--main)'}}>1対1でゆったり</div>
-              <div className="regular-desc">30分。まみとお話しして癒されましょう😊 料金はお問い合わせください。</div>
-            </div>
-          </div>
-
-          {/* まず相談・体験から */}
-          <div style={{background:'var(--card)', borderRadius:'16px', padding:'1.5rem', border:'1px solid var(--border)'}}>
-            <div style={{fontSize:'0.75rem', fontWeight:'700', color:'var(--main)', letterSpacing:'0.12em', marginBottom:'0.75rem'}}>FIRST STEP — まずはここから</div>
-            <div style={{display:'flex', gap:'1rem', flexWrap:'wrap'}}>
-              <div style={{flex:1, minWidth:'220px', background:'var(--bg)', borderRadius:'12px', padding:'1.1rem'}}>
-                <div style={{fontSize:'0.78rem', fontWeight:'700', color:'var(--main)', marginBottom:'0.3rem'}}>🎙️ 無料相談（15分）</div>
-                <div style={{fontFamily:'Noto Serif JP, serif', fontSize:'1.5rem', fontWeight:'700', marginBottom:'0.4rem'}}>無料</div>
-                <div style={{fontSize:'0.82rem', color:'var(--sub)', lineHeight:1.7}}>Zoom・LINE・FaceTimeで気軽にお話しします。<br /><strong>初めての方の練習にも◎</strong><br />弾きたい曲・不安なことを<br />何でもどうぞ</div>
-              </div>
-              <div style={{flex:1, minWidth:'220px', background:'var(--bg)', borderRadius:'12px', padding:'1.1rem'}}>
-                <div style={{fontSize:'0.78rem', fontWeight:'700', color:'var(--main)', marginBottom:'0.3rem'}}>🎹 体験レッスン（30分）</div>
-                <div style={{fontFamily:'Noto Serif JP, serif', fontSize:'1.5rem', fontWeight:'700', marginBottom:'0.4rem'}}>1,000円</div>
-                <div style={{fontSize:'0.82rem', color:'var(--sub)', lineHeight:1.7}}>実際のレッスンをお試し。<br />目標曲の難易度チェック＆<br />コースのご説明。<br />当日PayPay or 振込でOK</div>
-              </div>
-            </div>
-          </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div>
+          <div class="step-title">② 体験レッスン（30分・1,000円）</div>
+          <div class="step-desc">実際にレッスンを体験していただきます。目標曲の難易度チェックと、3ヶ月で弾けるかを正直にお伝えします。当日PayPayまたは振込でのお支払い。</div>
         </div>
-      </section>
-
-      {/* 普通のレッスンと何が違うのか */}
-      <section>
-        <div className="container">
-          <div className="sec-label">WHY MAMI</div>
-          <h2 className="sec-title">「普通のレッスン」と<br />何が違うのか</h2>
-          <div className="diff-grid">
-            {[
-              { icon: '🗺️', title: '最初にゴールと道順を決める', desc: '「どこへ向かうか」「あと何週かかるか」を最初に明確にします。ゴールが見えていれば、練習が楽しくなります。' },
-              { icon: '🔍', title: '正直な難易度チェック', desc: '「この曲は今の実力では3ヶ月では難しい」と正直に言える先生です。遠回りしないための本音のアドバイスを大切にしています。' },
-              { icon: '📱', title: '練習中もサポート', desc: 'レッスンの時間だけでなく、練習中に詰まった時も連絡OK。LINEやメールで質問できます。一人で悩まなくていい環境を作ります。' },
-              { icon: '🎵', title: '3ヶ月後にミニ発表会', desc: '目標に向かって練習する「期限」と「発表の場」があることで、モチベーションが格段に上がります。終わった後の達成感は格別です。' },
-              { icon: '👥', title: '50〜70代の方を熟知', desc: '時間の使い方、脳の使い方、モチベーションの保ち方など、大人の学び方を25年間研究し続けてきました。' },
-              { icon: '💬', title: 'お話ししながら楽しく', desc: '音楽を通じた会話や雑談も大切にしています。「先生と話すのが楽しみ」と言ってもらえるようなレッスンを目指しています。' },
-            ].map((d, i) => (
-              <div key={i} className="diff-card">
-                <div className="diff-icon">{d.icon}</div>
-                <div className="diff-title">{d.title}</div>
-                <div className="diff-desc">{d.desc}</div>
-              </div>
-            ))}
-          </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div>
+          <div class="step-title">③ 演奏動画を送る（任意）</div>
+          <div class="step-desc">弾いている様子の動画を送っていただくと、レベルや課題をより正確に把握できます。まったくゼロの方は「ドレミを弾いてみた」でもOK。動画が難しい場合はそのままレッスンスタートでも大丈夫です😊</div>
         </div>
-      </section>
-
-      {/* 受講の流れ */}
-      <section style={{background:'var(--card)'}}>
-        <div className="container">
-          <div className="sec-label">HOW IT WORKS</div>
-          <h2 className="sec-title">申し込みから<br />発表会までの流れ</h2>
-          <div className="steps">
-            {STEPS.map((s, i) => (
-              <div key={i} className="step">
-                <div className="step-num">{i + 1}</div>
-                <div>
-                  <div className="step-title">{s.title}</div>
-                  <div className="step-desc">{s.desc}</div>
-                </div>
-              </div>
-            ))}
-          </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div>
+          <div class="step-title">④ 12週間ロードマップの作成</div>
+          <div class="step-desc">目標曲から逆算して「何週目に何ができる状態か」を細かく設定した12週間プランを作成します。ゴールが見えているから、迷わず練習できます。</div>
         </div>
-      </section>
-
-      {/* 実績 */}
-      <section className="profile-bg">
-        <div className="container">
-          <div className="sec-label">PROFILE</div>
-          <h2 className="sec-title">講師 まみ について</h2>
-          <div className="profile-card">
-            <div style={{display:'flex', gap:'1.5rem', alignItems:'flex-start', flexWrap:'wrap', marginBottom:'1.5rem'}}>
-              <img
-                src="image-1778561468729.jpg"
-                alt="まみ - ピアノパーソナルトレーナー"
-                style={{width:'120px', height:'120px', borderRadius:'50%', objectFit:'cover', objectPosition:'top center', border:'3px solid var(--main)', flexShrink:0}}
-              />
-              <div style={{flex:1}}>
-                <p style={{fontFamily:'Noto Serif JP, serif', fontSize:'1.1rem', fontWeight:'700', color:'var(--text)', marginBottom:'0.3rem'}}>まみ</p>
-                <p style={{fontSize:'0.85rem', color:'var(--sub)'}}>ピアノパーソナルトレーナー<br/>音楽大学卒 ／ 指導歴25年以上</p>
-              </div>
-            </div>
-            <div className="profile-stats">
-              <div className="stat"><span className="stat-num">25+</span><span className="stat-label">年の指導歴</span></div>
-              <div className="stat"><span className="stat-num">1,000+</span><span className="stat-label">指導した生徒数</span></div>
-              <div className="stat"><span className="stat-num">多数</span><span className="stat-label">コンクール入賞者</span></div>
-            </div>
-            <p className="profile-text">
-              音楽大学卒業後、大手音楽教室にて25年以上、子どもから大人まで幅広い年齢層を指導。数多くのコンクール入賞者を輩出してきました。<br /><br />
-              特に「大人になってから、もう一度ピアノをやってみたい」という方、「特定の曲をどうしても弾けるようになりたい」という方の気持ちに深く共感し、そのための最短ルートを一緒に探すことに情熱を注いでいます。<br /><br />
-              「正直に、丁寧に、楽しく」がモットーです。
-            </p>
-            <div className="profile-tags">
-              {['音楽大学卒','指導歴25年以上','コンクール指導','大人ピアノ専門','50〜70代歓迎','オンライン対応'].map(t => (
-                <span key={t} className="tag">{t}</span>
-              ))}
-            </div>
-            <div className="device-note" style={{marginTop:'1.25rem'}}>
-              <strong>📹 カメラ（鍵盤が映ること）について：</strong><br />
-              オンラインレッスンでは鍵盤が映るカメラが必要です。スマートフォン・タブレットで大丈夫です。鍵盤が映ることで、指の動き・手の形・ペダルの使い方まで確認できるため、対面レッスンに近い質の指導が可能です。
-            </div>
-          </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div>
+          <div class="step-title">⑤ レッスン＆全力サポートスタート</div>
+          <div class="step-desc">レッスン＋練習状況の報告＋「毎日まみにLINE」サポートでお届けします。3ヶ月で弾ける！ミニ発表会もあります。</div>
         </div>
-      </section>
+      </div>
+    </div>
+  </div>
+</section>
 
-      {/* FAQ */}
-      <section>
-        <div className="container">
-          <div className="sec-label">FAQ</div>
-          <h2 className="sec-title">よくある質問</h2>
-          <div className="faq-list">
-            {FAQS.map((f, i) => <FaqItem key={i} faq={f} />)}
-          </div>
+<!-- 実績 -->
+<section class="profile-bg">
+  <div class="container">
+    <div class="sec-label">PROFILE</div>
+    <h2 class="sec-title">講師 まみ について</h2>
+    <div class="profile-card">
+      <div style="display:flex;gap:1.5rem;align-items:flex-start;flex-wrap:wrap;margin-bottom:1.5rem">
+        <img
+          src="image-1778561468729.jpg"
+          alt="まみ - ピアノパーソナルトレーナー"
+          style="width:120px;height:120px;border-radius:50%;object-fit:cover;object-position:top center;border:3px solid var(--main);flex-shrink:0"
+        />
+        <div style="flex:1">
+          <p style="font-family:'Noto Serif JP',serif;font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:0.3rem">まみ</p>
+          <p style="font-size:0.85rem;color:var(--sub)">ピアノパーソナルトレーナー<br>音楽大学卒 ／ 指導歴25年以上</p>
         </div>
-      </section>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><span class="stat-num">25+</span><span class="stat-label">年の指導歴</span></div>
+        <div class="stat"><span class="stat-num">1,000+</span><span class="stat-label">指導した生徒数</span></div>
+        <div class="stat"><span class="stat-num">多数</span><span class="stat-label">コンクール入賞者</span></div>
+      </div>
+      <p class="profile-text">
+        音楽大学卒業後、大手音楽教室にて25年以上、子どもから大人まで幅広い年齢層を指導。数多くのコンクール入賞者を輩出してきました。<br><br>
+        特に「大人になってから、もう一度ピアノをやってみたい」という方、「特定の曲をどうしても弾けるようになりたい」という方の気持ちに深く共感し、そのための最短ルートを一緒に探すことに情熱を注いでいます。<br><br>
+        「正直に、丁寧に、楽しく」がモットーです。
+      </p>
+      <div class="profile-tags">
+        <span class="tag">音楽大学卒</span>
+        <span class="tag">指導歴25年以上</span>
+        <span class="tag">コンクール指導</span>
+        <span class="tag">大人ピアノ専門</span>
+        <span class="tag">50〜70代歓迎</span>
+        <span class="tag">オンライン対応</span>
+      </div>
+      <div class="device-note" style="margin-top:1.25rem">
+        <strong>📹 カメラ（鍵盤が映ること）について：</strong><br>
+        オンラインレッスンでは鍵盤が映るカメラが必要です。スマートフォン・タブレットで大丈夫です。鍵盤が映ることで、指の動き・手の形・ペダルの使い方まで確認できるため、対面レッスンに近い質の指導が可能です。
+      </div>
+    </div>
+  </div>
+</section>
 
-      {/* CTA */}
-      <section className="cta-section">
-        <div className="container">
-          <h2 className="cta-title">気になることを何でも聞いてください。<br />まずはお話しましょう</h2>
-          <p className="cta-sub">
-            「弾けるかどうかわからない」「続けられるか不安」<br />
-            そういう気持ちのまま申し込んでOKです。<br />
-            まずは無料相談（15分）で一緒に考えましょう。
-          </p>
-          <a className="cta-btn" href={INTAKE}>まず無料相談（15分）を申し込む →</a>
-          <p style={{marginTop:'1rem', fontSize:'0.8rem', opacity:0.8}}>15分・完全無料</p>
-          <div style={{marginTop:'1rem', display:'flex', flexDirection:'column', gap:'0.4rem', alignItems:'center'}}>
-            <a href={FLOW_GUIDE} target="_blank" rel="noopener" style={{color:'rgba(255,255,255,0.85)', fontSize:'0.85rem', textDecoration:'underline'}}>
-              📋 申し込みから始めるまでの流れを見る
-            </a>
-            <a href={ZOOM_GUIDE} target="_blank" rel="noopener" style={{color:'rgba(255,255,255,0.85)', fontSize:'0.85rem', textDecoration:'underline'}}>
-              💻 Zoomの使い方がわからない方はこちら
-            </a>
-          </div>
-          <div style={{marginTop:'1.25rem'}}>
-            <a className="line-btn" href={LINE_URL} target="_blank" rel="noopener" style={{justifyContent:'center'}}>
-              <svg viewBox="0 0 24 24" style={{width:'1.2em',height:'1.2em',fill:'#fff',flexShrink:0}}><path d="M12 2C6.477 2 2 6.169 2 11.111c0 3.497 2.186 6.546 5.466 8.299l-.7 2.59 3.02-1.584c.807.224 1.661.345 2.543.345 5.523 0 10-4.169 10-9.111C22 6.169 17.523 2 12 2zm5.326 11.97l-1.365-1.015c-.17-.126-.41-.117-.568.026l-.766.696c-.103.094-.25.12-.38.066-.728-.308-1.56-.823-2.232-1.495-.671-.672-1.187-1.504-1.494-2.232-.054-.13-.028-.277.066-.38l.696-.766c.143-.158.152-.398.026-.568L9.294 6.937c-.143-.192-.397-.24-.597-.11l-1.565.976C6.878 7.98 6.75 8.227 6.77 8.48c.13 1.615.835 3.614 2.267 5.046 1.432 1.432 3.431 2.137 5.046 2.267.253.02.5-.108.677-.362l.976-1.565c.13-.2.082-.454-.41-.896z"/></svg>
-              まずLINEで相談してみる
-            </a>
-            <p style={{marginTop:'0.5rem', fontSize:'0.78rem', opacity:0.7}}>返信は翌日以内 ／ 強引な勧誘は一切しません</p>
-          </div>
-        </div>
-      </section>
+<!-- FAQ -->
+<section>
+  <div class="container">
+    <div class="sec-label">FAQ</div>
+    <h2 class="sec-title">よくある質問</h2>
+    <div class="faq-list">
 
-      <footer>
-        <p>© 2026 やさしいピアノカフェ</p>
-        <p style={{marginTop:'0.4rem'}}><a href={INTAKE}>お申し込み</a> ／ <a href="color-preview.html">デザイン選択（内部用）</a></p>
-      </footer>
-    </>
-  );
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>ピアノが全くゼロの状態でも参加できますか？</span>
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-a">もちろんです。「手取り足取り、ゆっくり丁寧に」が まみの指導スタイルです。楽譜が読めなくても、鍵盤に触ったことがなくても、目標の曲に向けて着実に進めます。</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>3ヶ月でどのくらい弾けるようになりますか？</span>
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-a">現在のレベルと目標曲によって変わります。だからこそ無料相談・体験レッスンで「この曲は弾けるか」を正直にお伝えします。無理な場合は正直に言い、現実的な代替プランを一緒に考えます。</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>ピアノ（電子ピアノ）はどんなものが必要ですか？</span>
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-a">61鍵以上のタッチ対応電子ピアノがあればOKです。お持ちでない方は体験後にご相談ください。ヘッドフォン対応なら夜間・早朝の練習もできます。</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>カメラはスマートフォンでもOKですか？</span>
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-a">はい、スマートフォンやタブレットで大丈夫です。大切なのは「鍵盤が映ること」。鍵盤が見えることで指使い・手の形まで確認できるので、むしろ上達が早くなります。</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>ミニ発表会は絶対に参加しなくてはいけませんか？</span>
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-a">出席は完全に自由です。顔出しも不要で、「鍵盤だけ映す」スタイルでもOKです。発表会自体は他の受講生の演奏を聞くだけでも、大きな刺激と励みになります。</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>練習はどれくらい必要ですか？</span>
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-a">1日15〜30分が理想です。「忙しい大人」が無理なく続けられる量を前提にプランを作ります。練習ができなかった週があっても大丈夫。その都度調整します。</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>途中で目標の曲を変えたいときは？</span>
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-a">全力で相談に乗ります。ただし、途中変更は進捗に影響することもあるので、なぜ変えたいのかを一緒に考えた上で判断します。</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>男性でも申し込めますか？</span>
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-a">もちろんです。男性の受講者も歓迎します。「定年後の夢」「職場や家族をびっくりさせたい」という男性の方もいます。年齢・性別問わずお申し込みいただけます。</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Zoomの使い方がわかりません</span>
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-a">画像つきのかんたんガイドをご用意しています。アプリの入れ方・つなぎ方・カメラの置き方まで丁寧に説明しています。ページ下部の「Zoomかんたんガイド」ボタンからご覧ください。また無料相談の時間にZoomの練習もできますので、安心してご連絡ください😊</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>レッスンの曜日・時間は固定ですか？</span>
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-a">平日の午前～昼過ぎが中心のレッスン時間帯になります。基本的に曜日と時間を固定してお届けしますが、スケジュール調整が必要な場合はご相談ください😊 お互いの予定が合えば振替も可能です。</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>途中で続けられなくなった場合はどうなりますか？</span>
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-a">やむを得ない事情がある場合はご相談ください。退会・返金に関する詳細は、ご入会後にお渡しする「入会のしおり」に記載しています。まずはお気軽にLINEでご連絡ください。</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <h2 class="cta-title">気になることを何でも聞いてください。<br>まずはお話しましょう</h2>
+    <p class="cta-sub">
+      「弾けるかどうかわからない」「続けられるか不安」<br>
+      そういう気持ちのまま申し込んでOKです。<br>
+      まずは無料相談（15分）で一緒に考えましょう。
+    </p>
+    <a class="cta-btn" href="https://pianomami.github.io/piano-cafe-mami/intake-form.html">まず無料相談（15分）を申し込む →</a>
+    <p style="margin-top:1rem;font-size:0.8rem;opacity:0.8">15分・完全無料</p>
+    <div style="margin-top:1rem;display:flex;flex-direction:column;gap:0.4rem;align-items:center">
+      <a href="https://pianomami.github.io/piano-cafe-mami/flow-guide.html" target="_blank" rel="noopener" style="color:rgba(255,255,255,0.85);font-size:0.85rem;text-decoration:underline">
+        📋 申し込みから始めるまでの流れを見る
+      </a>
+      <a href="https://pianomami.github.io/piano-cafe-mami/zoom-guide.html" target="_blank" rel="noopener" style="color:rgba(255,255,255,0.85);font-size:0.85rem;text-decoration:underline">
+        💻 Zoomの使い方がわからない方はこちら
+      </a>
+    </div>
+    <div style="margin-top:1.25rem">
+      <a class="line-btn" href="https://lin.ee/YNL3n7c" target="_blank" rel="noopener" style="justify-content:center">
+        <svg viewBox="0 0 24 24" style="width:1.2em;height:1.2em;fill:#fff;flex-shrink:0"><path d="M12 2C6.477 2 2 6.169 2 11.111c0 3.497 2.186 6.546 5.466 8.299l-.7 2.59 3.02-1.584c.807.224 1.661.345 2.543.345 5.523 0 10-4.169 10-9.111C22 6.169 17.523 2 12 2zm5.326 11.97l-1.365-1.015c-.17-.126-.41-.117-.568.026l-.766.696c-.103.094-.25.12-.38.066-.728-.308-1.56-.823-2.232-1.495-.671-.672-1.187-1.504-1.494-2.232-.054-.13-.028-.277.066-.38l.696-.766c.143-.158.152-.398.026-.568L9.294 6.937c-.143-.192-.397-.24-.597-.11l-1.565.976C6.878 7.98 6.75 8.227 6.77 8.48c.13 1.615.835 3.614 2.267 5.046 1.432 1.432 3.431 2.137 5.046 2.267.253.02.5-.108.677-.362l.976-1.565c.13-.2.082-.454-.41-.896z"/></svg>
+        まずLINEで相談してみる
+      </a>
+      <p style="margin-top:0.5rem;font-size:0.78rem;opacity:0.7">返信は翌日以内 ／ 強引な勧誘は一切しません</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 やさしいピアノカフェ</p>
+  <p style="margin-top:0.4rem"><a href="https://pianomami.github.io/piano-cafe-mami/intake-form.html">お申し込み</a> ／ <a href="color-preview.html">デザイン選択（内部用）</a></p>
+</footer>
+
+<script>
+function toggleFaq(btn) {
+  btn.closest('.faq-item').classList.toggle('open');
 }
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
 </script>
 </body>
 </html>

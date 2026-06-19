@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>無料相談・体験レッスン申し込み — やさしいピアノカフェ</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7/babel.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -27,7 +24,7 @@
     font-family: 'Noto Serif JP', serif;
     font-size: 0.9rem; color: #C9A989; font-weight: 700;
     letter-spacing: 0.08em; margin-bottom: 0.75rem;
-    display: block;
+    display: block; text-decoration: none;
   }
   .page-title { font-family: 'Noto Serif JP', serif; font-size: 1.6rem; font-weight: 700; margin-bottom: 0.5rem; }
   .page-sub { font-size: 0.88rem; color: #9B8B7E; line-height: 1.7; }
@@ -68,9 +65,7 @@
   }
   .step-dot.active { border-color: #C9A989; background: #C9A989; color: #fff; }
   .step-dot.done { border-color: #C9A989; background: #C9A989; color: #fff; }
-  .progress-labels {
-    display: flex; justify-content: space-between;
-  }
+  .progress-labels { display: flex; justify-content: space-between; }
   .progress-label {
     font-size: 0.72rem; color: #A89888; text-align: center;
     flex: 1; line-height: 1.3;
@@ -105,6 +100,7 @@
     border: 1.5px solid #E5D9CE;
     cursor: pointer; transition: border-color 0.15s, background 0.15s;
     font-size: 0.88rem; line-height: 1.4;
+    user-select: none;
   }
   .radio-row:hover, .check-row:hover { border-color: #C9A989; background: #EEE0D4; }
   .radio-row.selected, .check-row.selected { border-color: #C9A989; background: #EEE0D4; }
@@ -127,7 +123,7 @@
     padding: 0.7rem 1.5rem; border-radius: 50px;
     background: #fff; color: #9B8B7E;
     border: 1.5px solid #E5D9CE; font-weight: 700;
-    font-size: 0.9rem; transition: background 0.2s;
+    font-size: 0.9rem; transition: background 0.2s; cursor: pointer;
   }
   .btn-back:hover { background: #F3F0ED; }
   .btn-next {
@@ -136,6 +132,7 @@
     font-weight: 700; font-size: 0.95rem;
     transition: background 0.2s, transform 0.15s;
     box-shadow: 0 3px 12px rgba(224,123,84,0.3);
+    cursor: pointer;
   }
   .btn-next:hover { background: #B89B7C; transform: translateY(-1px); }
   .btn-next:disabled { background: #E5D9CE; box-shadow: none; transform: none; cursor: default; }
@@ -152,9 +149,7 @@
   .confirm-val { color: #3D3530; font-weight: 500; }
 
   /* thank you */
-  .thankyou {
-    text-align: center; padding: 1.5rem 0;
-  }
+  .thankyou { text-align: center; padding: 1.5rem 0; }
   .thankyou-icon { font-size: 3.5rem; margin-bottom: 1rem; }
   .thankyou-title { font-family: 'Noto Serif JP', serif; font-size: 1.4rem; font-weight: 700; margin-bottom: 0.75rem; }
   .thankyou-sub { font-size: 0.9rem; color: #9B8B7E; line-height: 1.8; margin-bottom: 2rem; }
@@ -165,6 +160,10 @@
   }
   .thankyou-back:hover { background: #B89B7C; }
 
+  /* hidden steps */
+  .step-panel { display: none; }
+  .step-panel.active { display: block; }
+
   @media (max-width: 520px) {
     .form-card { padding: 1.5rem 1.25rem 2rem; }
     .radio-group.grid2 { grid-template-columns: 1fr; }
@@ -172,431 +171,489 @@
 </style>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel">
-const { useState, useEffect } = React;
 
-const STEP_LABELS = ['基本情報', 'ピアノ歴', '目標', '動画提出'];
-const LS_KEY = 'piano_trainer_intake_draft_v1';
+<div class="page-header">
+  <a class="brand" href="piano-trainer.html">やさしいピアノカフェ</a>
+  <h1 class="page-title">無料相談・体験レッスン申し込み</h1>
+  <p class="page-sub">やさしいピアノカフェ まみへのお申し込みフォームです。<br>まずは無料相談（15分）からどうぞ😊</p>
+</div>
 
-const EMPTY = {
-  name: '', email: '', age: '', contact: '',
-  experience: '', frequency: '', past_lesson: '',
-  target_song: '', no_song: false, timeline: '', plan: '',
-  video_url: '', no_video: false, message: '',
-};
+<div class="form-card" id="formCard">
 
-function validate(step, data) {
-  const errs = {};
-  if (step === 0) {
-    if (!data.name.trim()) errs.name = 'お名前を入力してください';
-    if (!data.email.trim()) errs.email = 'メールアドレスを入力してください';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) errs.email = '正しいメールアドレスを入力してください';
-    if (!data.age) errs.age = '選択してください';
-    if (!data.contact) errs.contact = '選択してください';
-  }
-  if (step === 1) {
-    if (!data.experience) errs.experience = '選択してください';
-    if (!data.frequency) errs.frequency = '選択してください';
-    if (!data.past_lesson) errs.past_lesson = '選択してください';
-  }
-  if (step === 2) {
-    if (!data.no_song && !data.target_song.trim()) errs.target_song = '曲名を入力するか「まだ決まっていない」にチェックを入れてください';
-    if (!data.timeline) errs.timeline = '選択してください';
-    if (!data.plan) errs.plan = '選択してください';
-  }
-  return errs;
-}
-
-function Radio({ name, value, label, desc, checked, onChange }) {
-  return (
-    <label className={`radio-row ${checked ? 'selected' : ''}`}>
-      <input type="radio" name={name} value={value} checked={checked} onChange={() => onChange(value)} />
-      <span>
-        <span style={{fontWeight: checked ? 700 : 400}}>{label}</span>
-        {desc && <span style={{display:'block', fontSize:'0.78rem', color:'#9B8B7E', marginTop:'0.1rem'}}>{desc}</span>}
-      </span>
-    </label>
-  );
-}
-
-function Step0({ data, errors, set }) {
-  return (
-    <>
-      <div className="step-title">まずは基本情報を教えてください</div>
-
-      <div className="field">
-        <label className="label">お名前（本名またはあだ名でOK）<span className="req">*</span></label>
-        <input type="text" placeholder="例：花子さん、田中さん、まりちゃん…なんでもOK" value={data.name} onChange={e => set('name', e.target.value)} className={errors.name ? 'error' : ''} />
-        {errors.name && <div className="error-msg">{errors.name}</div>}
-      </div>
-
-      <div className="field">
-        <label className="label">メールアドレス<span className="req">*</span></label>
-        <input type="email" placeholder="例：hanako@example.com" value={data.email} onChange={e => set('email', e.target.value)} className={errors.email ? 'error' : ''} />
-        {errors.email && <div className="error-msg">{errors.email}</div>}
-      </div>
-
-      <div className="field">
-        <label className="label">年齢層<span className="req">*</span></label>
-        <div className={`radio-group ${errors.age ? 'error' : ''}`}>
-          {[['adult','大人（18歳以上）'],['parent','子ども（保護者が記入）']].map(([v, l]) => (
-            <Radio key={v} name="age" value={v} label={l} checked={data.age === v} onChange={v => set('age', v)} />
-          ))}
-        </div>
-        {errors.age && <div className="error-msg">{errors.age}</div>}
-      </div>
-
-      <div className="field">
-        <label className="label">ご連絡方法の希望<span className="req">*</span></label>
-        <div className="radio-group grid2">
-          {[['line','LINE'],['email','メール'],['either','どちらでも']].map(([v,l]) => (
-            <Radio key={v} name="contact" value={v} label={l} checked={data.contact === v} onChange={v => set('contact', v)} />
-          ))}
-        </div>
-        {errors.contact && <div className="error-msg">{errors.contact}</div>}
-      </div>
-    </>
-  );
-}
-
-function Step1({ data, errors, set }) {
-  return (
-    <>
-      <div className="step-title">ピアノ歴と練習状況を教えてください</div>
-
-      <div className="field">
-        <label className="label">ピアノ経験<span className="req">*</span></label>
-        <div className="radio-group">
-          {[
-            ['none','まったくゼロ'],
-            ['lt3m','3ヶ月未満（ほぼ初心者）'],
-            ['lt1y','半年〜1年程度'],
-            ['lt5y','2〜5年'],
-            ['5yplus','5年以上（ブランクあり含む）'],
-          ].map(([v,l]) => <Radio key={v} name="exp" value={v} label={l} checked={data.experience === v} onChange={v => set('experience', v)} />)}
-        </div>
-        {errors.experience && <div className="error-msg">{errors.experience}</div>}
-      </div>
-
-      <div className="field">
-        <label className="label">現在の練習頻度（またはしたい頻度）<span className="req">*</span></label>
-        <div className="radio-group grid2">
-          {[['daily','毎日'],['3w','週3〜4回'],['1w','週1〜2回'],['rare','月数回以下']].map(([v,l]) => (
-            <Radio key={v} name="freq" value={v} label={l} checked={data.frequency === v} onChange={v => set('frequency', v)} />
-          ))}
-        </div>
-        {errors.frequency && <div className="error-msg">{errors.frequency}</div>}
-      </div>
-
-      <div className="field">
-        <label className="label">これまでにレッスンを受けたことは？<span className="req">*</span></label>
-        <div className="radio-group">
-          {[
-            ['never','一度もない'],
-            ['past','昔受けていたが今はやめている'],
-            ['current','現在も受けている（他の先生から）'],
-          ].map(([v,l]) => <Radio key={v} name="lesson" value={v} label={l} checked={data.past_lesson === v} onChange={v => set('past_lesson', v)} />)}
-        </div>
-        {errors.past_lesson && <div className="error-msg">{errors.past_lesson}</div>}
-      </div>
-    </>
-  );
-}
-
-function Step2({ data, errors, set }) {
-  return (
-    <>
-      <div className="step-title">目標と希望プランを教えてください</div>
-
-      <div className="field">
-        <label className="label">弾きたい曲<span className="req">*</span></label>
-        <input
-          type="text" placeholder="例：ショパン ノクターン Op.9-2"
-          value={data.target_song}
-          onChange={e => set('target_song', e.target.value)}
-          disabled={data.no_song}
-          className={errors.target_song ? 'error' : ''}
-        />
-        <label className="check-row" style={{marginTop:'0.5rem', display:'flex', gap:'0.6rem', alignItems:'center', cursor:'pointer', fontSize:'0.85rem'}}>
-          <input type="checkbox" checked={data.no_song} onChange={e => set('no_song', e.target.checked)} style={{accentColor:'#C9A989'}} />
-          まだ決まっていない・相談したい
-        </label>
-        {errors.target_song && <div className="error-msg">{errors.target_song}</div>}
-        <div className="hint">難しすぎても大丈夫です。正直にお伝えして一緒に考えます。</div>
-      </div>
-
-      <div className="field">
-        <label className="label">目標期間のイメージ<span className="req">*</span></label>
-        <div className="radio-group grid2">
-          {[
-            ['1m','1ヶ月以内'],
-            ['3m','3ヶ月くらい'],
-            ['6m','6ヶ月くらい'],
-            ['slow','のんびり上達したい'],
-          ].map(([v,l]) => <Radio key={v} name="timeline" value={v} label={l} checked={data.timeline === v} onChange={v => set('timeline', v)} />)}
-        </div>
-        {errors.timeline && <div className="error-msg">{errors.timeline}</div>}
-      </div>
-
-      <div className="field">
-        <label className="label">気になるプラン<span className="req">*</span></label>
-        <div className="radio-group">
-          {[
-            ['program3','3ヶ月集中パーソナルプログラム（1曲マスター）'],
-            ['program1','定期レッスン（月2回）'],
-            ['mypace','単発レッスン'],
-            ['trial','まずは無料相談だけ（15分・完全無料）'],
-            ['consult','まだ決めていない・相談したい'],
-          ].map(([v,l]) => <Radio key={v} name="plan" value={v} label={l} checked={data.plan === v} onChange={v => set('plan', v)} />)}
-        </div>
-        {errors.plan && <div className="error-msg">{errors.plan}</div>}
-      </div>
-    </>
-  );
-}
-
-function Step3({ data, errors, set }) {
-  return (
-    <>
-      <div className="step-title">演奏動画と、その他ご要望を</div>
-
-      <div className="field">
-        <label className="label">演奏動画のURL<span className="opt">（任意）</span></label>
-        <input
-          type="url" placeholder="https://..."
-          value={data.video_url}
-          onChange={e => set('video_url', e.target.value)}
-          disabled={data.no_video}
-        />
-        <label className="check-row" style={{marginTop:'0.5rem', display:'flex', gap:'0.6rem', alignItems:'center', cursor:'pointer', fontSize:'0.85rem'}}>
-          <input type="checkbox" checked={data.no_video} onChange={e => set('no_video', e.target.checked)} style={{accentColor:'#C9A989'}} />
-          まだ動画がない・楽器を持っていない
-        </label>
-        <div className="hint">
-          YouTube の「限定公開」または Google ドライブの共有リンクでOKです。<br />
-          なくても申し込みできます。無料相談・体験レッスン時に一緒に確認します。
-        </div>
-      </div>
-
-      <div className="field">
-        <label className="label">悩み・伝えたいこと<span className="opt">（任意）</span></label>
-        <textarea
-          placeholder="例：昔やめてしまったことへの後悔、特定の箇所で詰まっている、など何でもどうぞ"
-          value={data.message}
-          onChange={e => set('message', e.target.value)}
-          rows={4}
-        />
-      </div>
-    </>
-  );
-}
-
-function ConfirmRow({ label, value }) {
-  if (!value) return null;
-  return (
-    <div className="confirm-row">
-      <span className="confirm-key">{label}</span>
-      <span className="confirm-val">{value}</span>
+  <!-- Progress -->
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-steps">
+      <div class="progress-line" id="progressLine" style="width:0%"></div>
+      <div class="step-dot active" id="dot0">1</div>
+      <div class="step-dot" id="dot1">2</div>
+      <div class="step-dot" id="dot2">3</div>
+      <div class="step-dot" id="dot3">4</div>
     </div>
-  );
-}
+    <div class="progress-labels">
+      <div class="progress-label active" id="lbl0">基本情報</div>
+      <div class="progress-label" id="lbl1">ピアノ歴</div>
+      <div class="progress-label" id="lbl2">目標</div>
+      <div class="progress-label" id="lbl3">動画提出</div>
+    </div>
+  </div>
 
-const PLAN_LABELS = {program3:'3ヶ月集中パーソナルプログラム（1曲マスター）',program1:'定期レッスン（月2回）',mypace:'単発レッスン',trial:'まずは無料相談',consult:'相談したい'};
-const AGE_LABELS = {adult:'大人',parent:'子ども（保護者記入）'};
-const EXP_LABELS = {none:'まったくゼロ',lt3m:'3ヶ月未満',lt1y:'半年〜1年',lt5y:'2〜5年','5yplus':'5年以上'};
-const FREQ_LABELS = {daily:'毎日',  '3w':'週3〜4回','1w':'週1〜2回',rare:'月数回以下'};
-const LESSON_LABELS = {never:'なし',past:'過去に受けていた',current:'現在も受けている'};
-const TIMELINE_LABELS = {'1m':'1ヶ月以内','3m':'3ヶ月','6m':'6ヶ月',slow:'のんびり'};
-const CONTACT_LABELS = {line:'LINE',email:'メール',either:'どちらでも'};
+  <!-- Step 0: 基本情報 -->
+  <div class="step-panel active" id="step0">
+    <div class="step-title">まずは基本情報を教えてください</div>
 
-function Confirm({ data }) {
-  return (
-    <>
-      <div className="step-title" style={{marginBottom:'1.25rem'}}>内容を確認してください</div>
-      <div className="confirm-block">
-        <div className="confirm-block-title">基本情報</div>
-        <ConfirmRow label="お名前" value={data.name} />
-        <ConfirmRow label="メール" value={data.email} />
-        <ConfirmRow label="年齢層" value={AGE_LABELS[data.age]} />
-        <ConfirmRow label="連絡方法" value={CONTACT_LABELS[data.contact]} />
+    <div class="field">
+      <label class="label">お名前（本名またはあだ名でOK）<span class="req">*</span></label>
+      <input type="text" id="f_name" placeholder="例：花子さん、田中さん、まりちゃん…なんでもOK">
+      <div class="error-msg" id="e_name"></div>
+    </div>
+
+    <div class="field">
+      <label class="label">メールアドレス<span class="req">*</span></label>
+      <input type="email" id="f_email" placeholder="例：hanako@example.com">
+      <div class="error-msg" id="e_email"></div>
+    </div>
+
+    <div class="field">
+      <label class="label">年齢層<span class="req">*</span></label>
+      <div class="radio-group" id="rg_age">
+        <label class="radio-row" onclick="selectRadio('age','adult',this)">
+          <input type="radio" name="age" value="adult"> 大人（18歳以上）
+        </label>
+        <label class="radio-row" onclick="selectRadio('age','parent',this)">
+          <input type="radio" name="age" value="parent"> 子ども（保護者が記入）
+        </label>
       </div>
-      <div className="confirm-block">
-        <div className="confirm-block-title">ピアノ歴</div>
-        <ConfirmRow label="経験" value={EXP_LABELS[data.experience]} />
-        <ConfirmRow label="練習頻度" value={FREQ_LABELS[data.frequency]} />
-        <ConfirmRow label="過去のレッスン" value={LESSON_LABELS[data.past_lesson]} />
-      </div>
-      <div className="confirm-block">
-        <div className="confirm-block-title">目標</div>
-        <ConfirmRow label="弾きたい曲" value={data.no_song ? '未定・相談したい' : data.target_song} />
-        <ConfirmRow label="目標期間" value={TIMELINE_LABELS[data.timeline]} />
-        <ConfirmRow label="希望プラン" value={PLAN_LABELS[data.plan]} />
-      </div>
-      {(data.video_url || data.no_video || data.message) && (
-        <div className="confirm-block">
-          <div className="confirm-block-title">その他</div>
-          <ConfirmRow label="動画" value={data.no_video ? '動画なし' : data.video_url || '—'} />
-          <ConfirmRow label="メッセージ" value={data.message || '—'} />
-        </div>
-      )}
-    </>
-  );
-}
+      <div class="error-msg" id="e_age"></div>
+    </div>
 
-const LINE_URL = 'https://lin.ee/YNL3n7c';
+    <div class="field">
+      <label class="label">ご連絡方法の希望<span class="req">*</span></label>
+      <div class="radio-group grid2" id="rg_contact">
+        <label class="radio-row" onclick="selectRadio('contact','line',this)">
+          <input type="radio" name="contact" value="line"> LINE
+        </label>
+        <label class="radio-row" onclick="selectRadio('contact','email',this)">
+          <input type="radio" name="contact" value="email"> メール
+        </label>
+        <label class="radio-row" onclick="selectRadio('contact','either',this)">
+          <input type="radio" name="contact" value="either"> どちらでも
+        </label>
+      </div>
+      <div class="error-msg" id="e_contact"></div>
+    </div>
 
-function ThankYou() {
-  return (
-    <div className="thankyou">
-      <div className="thankyou-icon">🎹</div>
-      <div className="thankyou-title">お申し込みありがとうございます！</div>
-      <div className="thankyou-sub">
-        3営業日以内に まみよりご連絡いたします。<br />
+    <div class="btn-row">
+      <button class="btn-next" onclick="nextStep()">次へ →</button>
+    </div>
+  </div>
+
+  <!-- Step 1: ピアノ歴 -->
+  <div class="step-panel" id="step1">
+    <div class="step-title">ピアノ歴と練習状況を教えてください</div>
+
+    <div class="field">
+      <label class="label">ピアノ経験<span class="req">*</span></label>
+      <div class="radio-group" id="rg_experience">
+        <label class="radio-row" onclick="selectRadio('experience','none',this)"><input type="radio" name="experience" value="none"> まったくゼロ</label>
+        <label class="radio-row" onclick="selectRadio('experience','lt3m',this)"><input type="radio" name="experience" value="lt3m"> 3ヶ月未満（ほぼ初心者）</label>
+        <label class="radio-row" onclick="selectRadio('experience','lt1y',this)"><input type="radio" name="experience" value="lt1y"> 半年〜1年程度</label>
+        <label class="radio-row" onclick="selectRadio('experience','lt5y',this)"><input type="radio" name="experience" value="lt5y"> 2〜5年</label>
+        <label class="radio-row" onclick="selectRadio('experience','5yplus',this)"><input type="radio" name="experience" value="5yplus"> 5年以上（ブランクあり含む）</label>
+      </div>
+      <div class="error-msg" id="e_experience"></div>
+    </div>
+
+    <div class="field">
+      <label class="label">現在の練習頻度（またはしたい頻度）<span class="req">*</span></label>
+      <div class="radio-group grid2" id="rg_frequency">
+        <label class="radio-row" onclick="selectRadio('frequency','daily',this)"><input type="radio" name="frequency" value="daily"> 毎日</label>
+        <label class="radio-row" onclick="selectRadio('frequency','3w',this)"><input type="radio" name="frequency" value="3w"> 週3〜4回</label>
+        <label class="radio-row" onclick="selectRadio('frequency','1w',this)"><input type="radio" name="frequency" value="1w"> 週1〜2回</label>
+        <label class="radio-row" onclick="selectRadio('frequency','rare',this)"><input type="radio" name="frequency" value="rare"> 月数回以下</label>
+      </div>
+      <div class="error-msg" id="e_frequency"></div>
+    </div>
+
+    <div class="field">
+      <label class="label">これまでにレッスンを受けたことは？<span class="req">*</span></label>
+      <div class="radio-group" id="rg_past_lesson">
+        <label class="radio-row" onclick="selectRadio('past_lesson','never',this)"><input type="radio" name="past_lesson" value="never"> 一度もない</label>
+        <label class="radio-row" onclick="selectRadio('past_lesson','past',this)"><input type="radio" name="past_lesson" value="past"> 昔受けていたが今はやめている</label>
+        <label class="radio-row" onclick="selectRadio('past_lesson','current',this)"><input type="radio" name="past_lesson" value="current"> 現在も受けている（他の先生から）</label>
+      </div>
+      <div class="error-msg" id="e_past_lesson"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" onclick="prevStep()">← 戻る</button>
+      <button class="btn-next" onclick="nextStep()">次へ →</button>
+    </div>
+  </div>
+
+  <!-- Step 2: 目標 -->
+  <div class="step-panel" id="step2">
+    <div class="step-title">目標と希望プランを教えてください</div>
+
+    <div class="field">
+      <label class="label">弾きたい曲<span class="req">*</span></label>
+      <input type="text" id="f_target_song" placeholder="例：ショパン ノクターン Op.9-2">
+      <label style="margin-top:0.5rem;display:flex;gap:0.6rem;align-items:center;cursor:pointer;font-size:0.85rem">
+        <input type="checkbox" id="f_no_song" onchange="toggleSongField()" style="accent-color:#C9A989">
+        まだ決まっていない・相談したい
+      </label>
+      <div class="error-msg" id="e_target_song"></div>
+      <div class="hint">難しすぎても大丈夫です。正直にお伝えして一緒に考えます。</div>
+    </div>
+
+    <div class="field">
+      <label class="label">目標期間のイメージ<span class="req">*</span></label>
+      <div class="radio-group grid2" id="rg_timeline">
+        <label class="radio-row" onclick="selectRadio('timeline','1m',this)"><input type="radio" name="timeline" value="1m"> 1ヶ月以内</label>
+        <label class="radio-row" onclick="selectRadio('timeline','3m',this)"><input type="radio" name="timeline" value="3m"> 3ヶ月くらい</label>
+        <label class="radio-row" onclick="selectRadio('timeline','6m',this)"><input type="radio" name="timeline" value="6m"> 6ヶ月くらい</label>
+        <label class="radio-row" onclick="selectRadio('timeline','slow',this)"><input type="radio" name="timeline" value="slow"> のんびり上達したい</label>
+      </div>
+      <div class="error-msg" id="e_timeline"></div>
+    </div>
+
+    <div class="field">
+      <label class="label">気になるプラン<span class="req">*</span></label>
+      <div class="radio-group" id="rg_plan">
+        <label class="radio-row" onclick="selectRadio('plan','program3',this)"><input type="radio" name="plan" value="program3"> 3ヶ月集中パーソナルプログラム（1曲マスター）</label>
+        <label class="radio-row" onclick="selectRadio('plan','program1',this)"><input type="radio" name="plan" value="program1"> 定期レッスン（月2回）</label>
+        <label class="radio-row" onclick="selectRadio('plan','mypace',this)"><input type="radio" name="plan" value="mypace"> 単発レッスン</label>
+        <label class="radio-row" onclick="selectRadio('plan','trial',this)"><input type="radio" name="plan" value="trial"> まずは無料相談だけ（15分・完全無料）</label>
+        <label class="radio-row" onclick="selectRadio('plan','consult',this)"><input type="radio" name="plan" value="consult"> まだ決めていない・相談したい</label>
+      </div>
+      <div class="error-msg" id="e_plan"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" onclick="prevStep()">← 戻る</button>
+      <button class="btn-next" onclick="nextStep()">次へ →</button>
+    </div>
+  </div>
+
+  <!-- Step 3: 動画提出 -->
+  <div class="step-panel" id="step3">
+    <div class="step-title">演奏動画と、その他ご要望を</div>
+
+    <div class="field">
+      <label class="label">演奏動画のURL<span class="opt">（任意）</span></label>
+      <input type="url" id="f_video_url" placeholder="https://...">
+      <label style="margin-top:0.5rem;display:flex;gap:0.6rem;align-items:center;cursor:pointer;font-size:0.85rem">
+        <input type="checkbox" id="f_no_video" onchange="toggleVideoField()" style="accent-color:#C9A989">
+        まだ動画がない・楽器を持っていない
+      </label>
+      <div class="hint">
+        YouTube の「限定公開」または Google ドライブの共有リンクでOKです。<br>
+        なくても申し込みできます。無料相談・体験レッスン時に一緒に確認します。
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="label">悩み・伝えたいこと<span class="opt">（任意）</span></label>
+      <textarea id="f_message" placeholder="例：昔やめてしまったことへの後悔、特定の箇所で詰まっている、など何でもどうぞ" rows="4"></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" onclick="prevStep()">← 戻る</button>
+      <button class="btn-next" onclick="nextStep()">確認する →</button>
+    </div>
+  </div>
+
+  <!-- Step 4: 確認画面 -->
+  <div class="step-panel" id="step4">
+    <div class="step-title" style="margin-bottom:1.25rem">内容を確認してください</div>
+
+    <div class="confirm-block">
+      <div class="confirm-block-title">基本情報</div>
+      <div class="confirm-row"><span class="confirm-key">お名前</span><span class="confirm-val" id="c_name"></span></div>
+      <div class="confirm-row"><span class="confirm-key">メール</span><span class="confirm-val" id="c_email"></span></div>
+      <div class="confirm-row"><span class="confirm-key">年齢層</span><span class="confirm-val" id="c_age"></span></div>
+      <div class="confirm-row"><span class="confirm-key">連絡方法</span><span class="confirm-val" id="c_contact"></span></div>
+    </div>
+    <div class="confirm-block">
+      <div class="confirm-block-title">ピアノ歴</div>
+      <div class="confirm-row"><span class="confirm-key">経験</span><span class="confirm-val" id="c_experience"></span></div>
+      <div class="confirm-row"><span class="confirm-key">練習頻度</span><span class="confirm-val" id="c_frequency"></span></div>
+      <div class="confirm-row"><span class="confirm-key">過去のレッスン</span><span class="confirm-val" id="c_past_lesson"></span></div>
+    </div>
+    <div class="confirm-block">
+      <div class="confirm-block-title">目標</div>
+      <div class="confirm-row"><span class="confirm-key">弾きたい曲</span><span class="confirm-val" id="c_target_song"></span></div>
+      <div class="confirm-row"><span class="confirm-key">目標期間</span><span class="confirm-val" id="c_timeline"></span></div>
+      <div class="confirm-row"><span class="confirm-key">希望プラン</span><span class="confirm-val" id="c_plan"></span></div>
+    </div>
+    <div class="confirm-block">
+      <div class="confirm-block-title">その他</div>
+      <div class="confirm-row"><span class="confirm-key">動画</span><span class="confirm-val" id="c_video"></span></div>
+      <div class="confirm-row"><span class="confirm-key">メッセージ</span><span class="confirm-val" id="c_message"></span></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" onclick="prevStep()">← 戻る</button>
+      <button class="btn-next" id="submitBtn" onclick="submitForm()">申し込みを送信する ✓</button>
+    </div>
+  </div>
+
+  <!-- サンクス画面 -->
+  <div class="step-panel" id="stepSent">
+    <div class="thankyou">
+      <div class="thankyou-icon">🎹</div>
+      <div class="thankyou-title">お申し込みありがとうございます！</div>
+      <div class="thankyou-sub">
+        3営業日以内に まみよりご連絡いたします。<br>
         まずはのんびりお待ちください。
       </div>
-      <div style={{
-        background:'#F0FAF4', border:'1.5px solid #06C755',
-        borderRadius:'12px', padding:'1.25rem 1.5rem',
-        marginBottom:'1.5rem', textAlign:'left'
-      }}>
-        <div style={{fontWeight:700, fontSize:'0.88rem', color:'#05a848', marginBottom:'0.4rem'}}>
+      <div style="background:#F0FAF4;border:1.5px solid #06C755;border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;text-align:left">
+        <div style="font-weight:700;font-size:0.88rem;color:#05a848;margin-bottom:0.4rem">
           📱 LINEでもつながっておきましょう
         </div>
-        <div style={{fontSize:'0.83rem', color:'#3D3530', lineHeight:1.7, marginBottom:'0.75rem'}}>
-          レッスン開始後の連絡・質問・練習報告はすべてLINEで行います。<br />
+        <div style="font-size:0.83rem;color:#3D3530;line-height:1.7;margin-bottom:0.75rem">
+          レッスン開始後の連絡・質問・練習報告はすべてLINEで行います。<br>
           今のうちにお友だち追加しておくとスムーズです。
         </div>
-        <a href={LINE_URL} target="_blank" rel="noopener" style={{
-          display:'inline-flex', alignItems:'center', gap:'0.4rem',
-          background:'#06C755', color:'#fff', borderRadius:'50px',
-          padding:'0.55rem 1.4rem', fontWeight:700, fontSize:'0.88rem',
-          textDecoration:'none'
-        }}>
-          <svg viewBox="0 0 24 24" style={{width:'1.1em',height:'1.1em',fill:'#fff',flexShrink:0}}><path d="M12 2C6.477 2 2 6.169 2 11.111c0 3.497 2.186 6.546 5.466 8.299l-.7 2.59 3.02-1.584c.807.224 1.661.345 2.543.345 5.523 0 10-4.169 10-9.111C22 6.169 17.523 2 12 2zm5.326 11.97l-1.365-1.015c-.17-.126-.41-.117-.568.026l-.766.696c-.103.094-.25.12-.38.066-.728-.308-1.56-.823-2.232-1.495-.671-.672-1.187-1.504-1.494-2.232-.054-.13-.028-.277.066-.38l.696-.766c.143-.158.152-.398.026-.568L9.294 6.937c-.143-.192-.397-.24-.597-.11l-1.565.976C6.878 7.98 6.75 8.227 6.77 8.48c.13 1.615.835 3.614 2.267 5.046 1.432 1.432 3.431 2.137 5.046 2.267.253.02.5-.108.677-.362l.976-1.565c.13-.2.082-.454-.41-.896z"/></svg>
+        <a href="https://lin.ee/YNL3n7c" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:0.4rem;background:#06C755;color:#fff;border-radius:50px;padding:0.55rem 1.4rem;font-weight:700;font-size:0.88rem;text-decoration:none">
+          <svg viewBox="0 0 24 24" style="width:1.1em;height:1.1em;fill:#fff;flex-shrink:0"><path d="M12 2C6.477 2 2 6.169 2 11.111c0 3.497 2.186 6.546 5.466 8.299l-.7 2.59 3.02-1.584c.807.224 1.661.345 2.543.345 5.523 0 10-4.169 10-9.111C22 6.169 17.523 2 12 2zm5.326 11.97l-1.365-1.015c-.17-.126-.41-.117-.568.026l-.766.696c-.103.094-.25.12-.38.066-.728-.308-1.56-.823-2.232-1.495-.671-.672-1.187-1.504-1.494-2.232-.054-.13-.028-.277.066-.38l.696-.766c.143-.158.152-.398.026-.568L9.294 6.937c-.143-.192-.397-.24-.597-.11l-1.565.976C6.878 7.98 6.75 8.227 6.77 8.48c.13 1.615.835 3.614 2.267 5.046 1.432 1.432 3.431 2.137 5.046 2.267.253.02.5-.108.677-.362l.976-1.565c.13-.2.082-.454-.41-.896z"/></svg>
           LINEでお友だち追加する
         </a>
       </div>
-      <a className="thankyou-back" href="piano-trainer.html">← サービスページに戻る</a>
+      <a class="thankyou-back" href="piano-trainer.html">← サービスページに戻る</a>
     </div>
-  );
+  </div>
+
+</div>
+
+<script>
+const LS_KEY = 'piano_trainer_intake_draft_v1';
+let currentStep = 0;
+
+const LABELS = {
+  age:         { adult:'大人', parent:'子ども（保護者記入）' },
+  contact:     { line:'LINE', email:'メール', either:'どちらでも' },
+  experience:  { none:'まったくゼロ', lt3m:'3ヶ月未満', lt1y:'半年〜1年', lt5y:'2〜5年', '5yplus':'5年以上' },
+  frequency:   { daily:'毎日', '3w':'週3〜4回', '1w':'週1〜2回', rare:'月数回以下' },
+  past_lesson: { never:'なし', past:'過去に受けていた', current:'現在も受けている' },
+  timeline:    { '1m':'1ヶ月以内', '3m':'3ヶ月', '6m':'6ヶ月', slow:'のんびり' },
+  plan:        { program3:'3ヶ月集中パーソナルプログラム（1曲マスター）', program1:'定期レッスン（月2回）', mypace:'単発レッスン', trial:'まずは無料相談', consult:'相談したい' },
+};
+
+function getData() {
+  return {
+    name:        document.getElementById('f_name').value.trim(),
+    email:       document.getElementById('f_email').value.trim(),
+    age:         getRadio('age'),
+    contact:     getRadio('contact'),
+    experience:  getRadio('experience'),
+    frequency:   getRadio('frequency'),
+    past_lesson: getRadio('past_lesson'),
+    target_song: document.getElementById('f_target_song').value.trim(),
+    no_song:     document.getElementById('f_no_song').checked,
+    timeline:    getRadio('timeline'),
+    plan:        getRadio('plan'),
+    video_url:   document.getElementById('f_video_url').value.trim(),
+    no_video:    document.getElementById('f_no_video').checked,
+    message:     document.getElementById('f_message').value.trim(),
+  };
 }
 
-function App() {
-  const [step, setStep] = useState(0);
-  const [data, setData] = useState(() => {
-    try { return JSON.parse(localStorage.getItem(LS_KEY)) || EMPTY; } catch { return EMPTY; }
+function getRadio(name) {
+  const el = document.querySelector('input[name="' + name + '"]:checked');
+  return el ? el.value : '';
+}
+
+function selectRadio(name, value, rowEl) {
+  document.querySelectorAll('input[name="' + name + '"]').forEach(function(i) {
+    i.closest('.radio-row').classList.remove('selected');
   });
-  const [errors, setErrors] = useState({});
-  const [sending, setSending] = useState(false);
-  const [sent, setSent] = useState(false);
-
-  const set = (key, val) => setData(prev => ({ ...prev, [key]: val }));
-
-  useEffect(() => {
-    localStorage.setItem(LS_KEY, JSON.stringify(data));
-  }, [data]);
-
-  const totalSteps = 4;
-  const progressPct = step >= totalSteps ? 100 : (step / totalSteps) * 100;
-
-  const next = () => {
-    const errs = validate(step, data);
-    if (Object.keys(errs).length) { setErrors(errs); return; }
-    setErrors({});
-    setStep(s => s + 1);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const back = () => { setStep(s => s - 1); setErrors({}); window.scrollTo({ top: 0, behavior: 'smooth' }); };
-
-  const submit = async () => {
-    setSending(true);
-    try {
-      const endpoint = 'https://formspree.io/f/xdavdlyk';
-      const body = {
-        _subject: `【新規申込】${data.name}さんからの申込`,
-        _replyto: data.email,
-        名前: data.name, メール: data.email, 年齢層: AGE_LABELS[data.age],
-        連絡方法: CONTACT_LABELS[data.contact], 経験: EXP_LABELS[data.experience],
-        練習頻度: FREQ_LABELS[data.frequency], 過去レッスン: LESSON_LABELS[data.past_lesson],
-        弾きたい曲: data.no_song ? '未定・相談したい' : data.target_song,
-        目標期間: TIMELINE_LABELS[data.timeline], 希望プラン: PLAN_LABELS[data.plan],
-        動画URL: data.no_video ? 'なし（後日相談）' : data.video_url,
-        メッセージ: data.message,
-      };
-      const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(body) });
-      if (!res.ok) throw new Error('送信失敗');
-      localStorage.removeItem(LS_KEY);
-      setSent(true);
-    } catch {
-      alert('送信中にエラーが発生しました。お手数ですがSNSのDMよりご連絡ください。');
-    } finally {
-      setSending(false);
-    }
-  };
-
-  const isConfirm = step === totalSteps;
-  const isForm = step < totalSteps;
-
-  return (
-    <>
-      <div className="page-header">
-        <a className="brand" href="piano-trainer.html">やさしいピアノカフェ</a>
-        <h1 className="page-title">無料相談・体験レッスン申し込み</h1>
-        <p className="page-sub">やさしいピアノカフェ まみへのお申し込みフォームです。<br />まずは無料相談（15分）からどうぞ😊</p>
-      </div>
-
-      <div className="form-card">
-        {sent ? <ThankYou /> : (
-          <>
-            {/* Progress */}
-            <div className="progress-wrap">
-              <div className="progress-steps">
-                <div className="progress-line" style={{width: `${progressPct}%`}} />
-                {STEP_LABELS.map((_, i) => (
-                  <div key={i} className={`step-dot ${i < step ? 'done' : i === step ? 'active' : ''}`}>
-                    {i < step ? '✓' : i + 1}
-                  </div>
-                ))}
-              </div>
-              <div className="progress-labels">
-                {STEP_LABELS.map((l, i) => (
-                  <div key={i} className={`progress-label ${i === step ? 'active' : ''}`}>{l}</div>
-                ))}
-              </div>
-            </div>
-
-            {step === 0 && <Step0 data={data} errors={errors} set={set} />}
-            {step === 1 && <Step1 data={data} errors={errors} set={set} />}
-            {step === 2 && <Step2 data={data} errors={errors} set={set} />}
-            {step === 3 && <Step3 data={data} errors={errors} set={set} />}
-            {isConfirm && <Confirm data={data} />}
-
-            <div className="btn-row">
-              {step > 0 && (
-                <button className="btn-back" onClick={back}>← 戻る</button>
-              )}
-              {isForm && (
-                <button className="btn-next" onClick={next}>
-                  {step === totalSteps - 1 ? '確認する →' : '次へ →'}
-                </button>
-              )}
-              {isConfirm && (
-                <button className="btn-next" onClick={submit} disabled={sending}>
-                  {sending ? '送信中...' : '申し込みを送信する ✓'}
-                </button>
-              )}
-            </div>
-          </>
-        )}
-      </div>
-    </>
-  );
+  rowEl.classList.add('selected');
+  rowEl.querySelector('input').checked = true;
+  saveDraft();
+  clearErr('e_' + name);
 }
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
+function toggleSongField() {
+  var cb = document.getElementById('f_no_song');
+  document.getElementById('f_target_song').disabled = cb.checked;
+  if (cb.checked) clearErr('e_target_song');
+  saveDraft();
+}
+
+function toggleVideoField() {
+  var cb = document.getElementById('f_no_video');
+  document.getElementById('f_video_url').disabled = cb.checked;
+  saveDraft();
+}
+
+function clearErr(id) {
+  var el = document.getElementById(id);
+  if (el) el.textContent = '';
+}
+
+function setErr(id, msg) {
+  var el = document.getElementById(id);
+  if (el) el.textContent = msg;
+}
+
+function validate(step) {
+  var ok = true;
+  var d = getData();
+  if (step === 0) {
+    if (!d.name)  { setErr('e_name', 'お名前を入力してください'); ok = false; }
+    if (!d.email) { setErr('e_email', 'メールアドレスを入力してください'); ok = false; }
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) { setErr('e_email', '正しいメールアドレスを入力してください'); ok = false; }
+    if (!d.age)     { setErr('e_age', '選択してください'); ok = false; }
+    if (!d.contact) { setErr('e_contact', '選択してください'); ok = false; }
+  }
+  if (step === 1) {
+    if (!d.experience)  { setErr('e_experience', '選択してください'); ok = false; }
+    if (!d.frequency)   { setErr('e_frequency', '選択してください'); ok = false; }
+    if (!d.past_lesson) { setErr('e_past_lesson', '選択してください'); ok = false; }
+  }
+  if (step === 2) {
+    if (!d.no_song && !d.target_song) { setErr('e_target_song', '曲名を入力するか「まだ決まっていない」にチェックを入れてください'); ok = false; }
+    if (!d.timeline) { setErr('e_timeline', '選択してください'); ok = false; }
+    if (!d.plan)     { setErr('e_plan', '選択してください'); ok = false; }
+  }
+  return ok;
+}
+
+function showStep(n) {
+  document.querySelectorAll('.step-panel').forEach(function(p) { p.classList.remove('active'); });
+  var isSent = (n === 'sent');
+  var isConfirm = (n === 4);
+
+  if (isSent) {
+    document.getElementById('progressWrap').style.display = 'none';
+    document.getElementById('stepSent').classList.add('active');
+    return;
+  }
+
+  document.getElementById('progressWrap').style.display = '';
+  document.getElementById('step' + n).classList.add('active');
+
+  for (var i = 0; i < 4; i++) {
+    var dot = document.getElementById('dot' + i);
+    var lbl = document.getElementById('lbl' + i);
+    dot.classList.remove('active', 'done');
+    lbl.classList.remove('active');
+    if (i < n) { dot.classList.add('done'); dot.textContent = '✓'; }
+    else { dot.textContent = i + 1; }
+    if (i === n && !isConfirm) { dot.classList.add('active'); lbl.classList.add('active'); }
+    if (isConfirm && i === 3) lbl.classList.add('active');
+  }
+
+  var pct = isConfirm ? 100 : (n / 4) * 100;
+  document.getElementById('progressLine').style.width = pct + '%';
+}
+
+function fillConfirm() {
+  var d = getData();
+  document.getElementById('c_name').textContent        = d.name;
+  document.getElementById('c_email').textContent       = d.email;
+  document.getElementById('c_age').textContent         = LABELS.age[d.age] || '—';
+  document.getElementById('c_contact').textContent     = LABELS.contact[d.contact] || '—';
+  document.getElementById('c_experience').textContent  = LABELS.experience[d.experience] || '—';
+  document.getElementById('c_frequency').textContent   = LABELS.frequency[d.frequency] || '—';
+  document.getElementById('c_past_lesson').textContent = LABELS.past_lesson[d.past_lesson] || '—';
+  document.getElementById('c_target_song').textContent = d.no_song ? '未定・相談したい' : (d.target_song || '—');
+  document.getElementById('c_timeline').textContent    = LABELS.timeline[d.timeline] || '—';
+  document.getElementById('c_plan').textContent        = LABELS.plan[d.plan] || '—';
+  document.getElementById('c_video').textContent       = d.no_video ? '動画なし' : (d.video_url || '—');
+  document.getElementById('c_message').textContent     = d.message || '—';
+}
+
+function nextStep() {
+  if (!validate(currentStep)) return;
+  currentStep++;
+  if (currentStep === 4) fillConfirm();
+  showStep(currentStep);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  saveDraft();
+}
+
+function prevStep() {
+  currentStep--;
+  showStep(currentStep);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function submitForm() {
+  var btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = '送信中...';
+
+  var d = getData();
+  var body = {
+    _subject: '【新規申込】' + d.name + 'さんからの申込',
+    _replyto: d.email,
+    名前: d.name,
+    メール: d.email,
+    年齢層: LABELS.age[d.age],
+    連絡方法: LABELS.contact[d.contact],
+    経験: LABELS.experience[d.experience],
+    練習頻度: LABELS.frequency[d.frequency],
+    過去レッスン: LABELS.past_lesson[d.past_lesson],
+    弾きたい曲: d.no_song ? '未定・相談したい' : d.target_song,
+    目標期間: LABELS.timeline[d.timeline],
+    希望プラン: LABELS.plan[d.plan],
+    動画URL: d.no_video ? 'なし（後日相談）' : d.video_url,
+    メッセージ: d.message,
+  };
+
+  fetch('https://formspree.io/f/xdavdlyk', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(body),
+  }).then(function(res) {
+    if (!res.ok) throw new Error('error');
+    localStorage.removeItem(LS_KEY);
+    showStep('sent');
+  }).catch(function() {
+    alert('送信中にエラーが発生しました。お手数ですがSNSのDMよりご連絡ください。');
+    btn.disabled = false;
+    btn.textContent = '申し込みを送信する ✓';
+  });
+}
+
+function saveDraft() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(getData())); } catch(e) {}
+}
+
+function setRadioUI(name, value) {
+  var input = document.querySelector('input[name="' + name + '"][value="' + value + '"]');
+  if (input) { input.checked = true; input.closest('.radio-row').classList.add('selected'); }
+}
+
+function restoreDraft() {
+  try {
+    var d = JSON.parse(localStorage.getItem(LS_KEY));
+    if (!d) return;
+    if (d.name)  document.getElementById('f_name').value = d.name;
+    if (d.email) document.getElementById('f_email').value = d.email;
+    if (d.age)         setRadioUI('age', d.age);
+    if (d.contact)     setRadioUI('contact', d.contact);
+    if (d.experience)  setRadioUI('experience', d.experience);
+    if (d.frequency)   setRadioUI('frequency', d.frequency);
+    if (d.past_lesson) setRadioUI('past_lesson', d.past_lesson);
+    if (d.target_song) document.getElementById('f_target_song').value = d.target_song;
+    if (d.no_song)  { document.getElementById('f_no_song').checked = true; toggleSongField(); }
+    if (d.timeline) setRadioUI('timeline', d.timeline);
+    if (d.plan)     setRadioUI('plan', d.plan);
+    if (d.video_url) document.getElementById('f_video_url').value = d.video_url;
+    if (d.no_video)  { document.getElementById('f_no_video').checked = true; toggleVideoField(); }
+    if (d.message) document.getElementById('f_message').value = d.message;
+  } catch(e) {}
+}
+
+restoreDraft();
+showStep(0);
+
+['f_name','f_email','f_target_song','f_video_url','f_message'].forEach(function(id) {
+  var el = document.getElementById(id);
+  if (el) el.addEventListener('input', saveDraft);
+});
 </script>
 </body>
 </html>
