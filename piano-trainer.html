@@ -346,7 +346,7 @@ function App() {
 
           {/* 全コース共通の特典 */}
           <div style={{background:'var(--main)', color:'#fff', borderRadius:'16px', padding:'1.25rem 1.5rem', marginBottom:'1.5rem', display:'flex', flexWrap:'wrap', gap:'1rem', alignItems:'center', justifyContent:'center'}}>
-            {['📹 全レッスン後アーカイブ動画をお届け', '💬 LINEでいつでも質問OK', '☕ 月1回グループ音楽カフェ（無料参加）', '🎹 初心者の方も大歓迎'].map((t,i) => (
+            {['📹 全レッスン後アーカイブ動画をお届け', '💬 LINEサポートあり', '☕ 月1回グループ音楽カフェ（無料参加）', '🎹 初心者の方も大歓迎'].map((t,i) => (
               <div key={i} style={{fontSize:'0.82rem', fontWeight:'700'}}>{t}</div>
             ))}
           </div>
@@ -358,7 +358,7 @@ function App() {
               <div style={{fontSize:'0.72rem', fontWeight:'700', letterSpacing:'0.1em', background:'rgba(255,255,255,0.2)', borderRadius:'50px', padding:'0.2rem 0.8rem', display:'inline-block', marginBottom:'0.75rem'}}>🌟 本気で上達したい方へ</div>
               <div style={{fontFamily:'Noto Serif JP, serif', fontSize:'1.25rem', fontWeight:'700', marginBottom:'0.25rem'}}>3ヶ月集中パーソナルプログラム</div>
               <div style={{fontSize:'0.85rem', opacity:0.88, marginBottom:'1.1rem'}}>あなたの悩みと目標に集中</div>
-              {['1曲を完全にマスターする','あなたの悩みにフォーカスした特別プログラム','3ヶ月で底力アップを実現','全レッスン後アーカイブ動画をお届け','LINEで質問いつでもOK','月1回グループ音楽カフェ 無料','3ヶ月後ミニ発表会で成果発表'].map((t,i) => (
+              {['1曲を完全にマスターする','あなたの悩みにフォーカスした特別プログラム','3ヶ月で底力アップを実現','全レッスン後アーカイブ動画をお届け','「毎日まみにLINE」サポート付き','月1回グループ音楽カフェ 無料','3ヶ月後ミニ発表会で成果発表'].map((t,i) => (
                 <div key={i} style={{fontSize:'0.82rem', display:'flex', gap:'0.5rem', marginBottom:'0.35rem'}}><span>✅</span>{t}</div>
               ))}
               <div style={{fontSize:'0.75rem', opacity:0.8, marginTop:'1rem', paddingTop:'0.75rem', borderTop:'1px solid rgba(255,255,255,0.3)'}}>定員2名（モニター募集中・初月50%オフ） ／ お支払い：前日までにPayPay or 振込</div>
@@ -369,7 +369,7 @@ function App() {
               <div style={{fontSize:'0.72rem', fontWeight:'700', letterSpacing:'0.1em', background:'var(--bg2)', color:'var(--main)', borderRadius:'50px', padding:'0.2rem 0.8rem', display:'inline-block', marginBottom:'0.75rem'}}>🎹 継続して楽しみたい方へ</div>
               <div style={{fontFamily:'Noto Serif JP, serif', fontSize:'1.25rem', fontWeight:'700', marginBottom:'0.25rem'}}>定期レッスン</div>
               <div style={{fontSize:'0.85rem', color:'var(--sub)', marginBottom:'1.1rem'}}>30分 × 月2回</div>
-              {['全レッスン後アーカイブ動画お届け','レッスン後フィードバックメッセージ','月1グループ音楽カフェ 無料'].map((t,i) => (
+              {['全レッスン後アーカイブ動画お届け','レッスン後フィードバックメッセージ','週1回までLINEで質問・相談OK','月1グループ音楽カフェ 無料'].map((t,i) => (
                 <div key={i} style={{fontSize:'0.82rem', display:'flex', gap:'0.5rem', marginBottom:'0.35rem', color:'var(--text)'}}><span>✅</span>{t}</div>
               ))}
               <div style={{fontSize:'0.75rem', color:'var(--sub)', marginTop:'1rem', paddingTop:'0.75rem', borderTop:'1px solid var(--border)'}}>お支払い：前日までにPayPay or 振込</div>
@@ -385,8 +385,8 @@ function App() {
             </div>
             <div className="regular-card" style={{margin:0}}>
               <div className="regular-title">☕ グループ音楽カフェ</div>
-              <div className="regular-price">受講生は無料</div>
-              <div className="regular-desc">月1回・Zoomで開催。音楽の話・好きな曲の紹介・日常のおしゃべり。顔出し不要。ゆったり楽しみましょう😊</div>
+              <div className="regular-price">受講生は無料・単発の方は300円</div>
+              <div className="regular-desc">月1回・Zoomで開催。音楽の話・好きな曲の紹介・日常のおしゃべり。顔出し不要。ゆったり楽しみましょう😊（一般の方は500円）</div>
             </div>
             <div className="regular-card" style={{margin:0}}>
               <div className="regular-title">💬 個人おしゃべりカフェ</div>
